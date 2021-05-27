@@ -3,6 +3,8 @@ class UI {
   static destinationFormEl = { get: () => document.getElementById('destination-form') };
   static originInputValue = { get: () => this.originFormEl.get().firstElementChild.value };
   static destinationInputValue = { get: () => this.destinationFormEl.get().firstElementChild.value };
+  static currentOriginEl = '';
+  static currentDestinationEl = '';
 
   static handleFormSubmitEvent(target) {
     if (target === this.originFormEl.get()) {
@@ -17,27 +19,33 @@ class UI {
   }
 
   static selectNewResult = (target, typeOfResult) => {
-    const listElement = document.querySelectorAll(`.${typeOfResult} > LI`);
+    const listElements = document.querySelectorAll(`.${typeOfResult} > LI`);
 
-    listElement.forEach(listItem => {
+    listElements.forEach(listItem => {
       listItem.classList.remove('selected');
     })
 
     target.classList.add('selected');
-    console.log('Target: ', target);
+    console.log('Current Origin: ', this.currentOriginEl, '\nCurrent Destination: ', this.currentDestinationEl);
   }
 
   static handleClickEvent = (target) => {
     if (target.tagName === 'LI') {
-      if (target.closest('UL').classList.contains('origins')) {
+      const listSelected = target.closest('UL');
+
+      if (listSelected.classList.contains('origins')) {
+        this.currentOriginEl = target;
         this.selectNewResult(target, 'origins');
       }
 
-      if (target.closest('UL').classList.contains('destinations')) {
+      if (listSelected.classList.contains('destinations')) {
+        this.currentDestinationEl = target;
         this.selectNewResult(target, 'destinations');
       }
+    }
 
-      // button
+    if (target.classList.contains('plan-trip')) {
+      tripPlanner.getTripPlan();
     }
   }
 

@@ -6,7 +6,7 @@ class Renderer {
 
     mapBox.currentOriginResults.forEach(result => {
       orginListHtml += `
-    <li data-long=${result.lon} data-lat=${result.lat}>
+    <li data-lon=${result.lon} data-lat=${result.lat}>
       <div class="name ignore-click">${result.name}</div>
       <div class="ignore-click">${result.address}</div>
     </li>`;
@@ -20,7 +20,7 @@ class Renderer {
 
     mapBox.currentDestinationResults.forEach(result => {
       destinationListHtml += `
-    <li data-long=${result.lon} data-lat=${result.lat}>
+    <li data-lon=${result.lon} data-lat=${result.lat}>
       <div class="name ignore-click">${result.name}</div>
       <div class="ignore-click">${result.address}</div>
     </li>`;

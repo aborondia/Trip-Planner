@@ -15,6 +15,14 @@ class Renderer {
     return orginListHtml;
   }
 
+  static buildRouteHtml = ()=>{
+    return '';
+  }
+
+  static buildTripHtml = ()=>{
+    return '';
+  }
+
   static buildDestinationListHtml = () => {
     let destinationListHtml = '';
 
@@ -56,7 +64,11 @@ class Renderer {
     </div>
     
     <div class="bus-container">
+    <ul id="available-routes">
+      ${this.buildRouteHtml()}
+    </ul>
     <ul class="my-trip">
+    ${this.buildTripHtml()}
       <li>
         <i class="fas fa-walking" aria-hidden="true"></i>Walk for 15 minutes
         to stop #61121 - Southbound Dovercourt at Falcon Ridge
@@ -87,7 +99,7 @@ class Renderer {
         <i class="fas fa-walking" aria-hidden="true"></i>Walk for 1 minutes to
         your destination.
       </li>
-    </ul>
+    </ul.available-routes>
     </div>`;
   }
 }

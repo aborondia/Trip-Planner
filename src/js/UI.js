@@ -7,12 +7,12 @@ class UI {
   static handleFormSubmit(target) {
     if (target === this.originFormEl.get()) {
       mapBox.getOriginSearchResults();
-      Renderer.renderPage();
+      // Renderer.renderPage();
     }
 
     if (target === this.destinationFormEl.get()) {
       mapBox.getDestinationSearchResults();
-      Renderer.renderPage();
+      // Renderer.renderPage();
     }
   }
 

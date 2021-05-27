@@ -14,27 +14,40 @@ class MapBox {
     return data;
   }
 
-  getFilteredSearchResults = (searchResults, arrayToPopulate) => {
+  getFilteredSearchResults = (searchResults, resultsType) => {
+    const newResults = [];
     searchResults.features.forEach(result => {
-      arrayToPopulate.push({
+      newResults.push({
         name: result.text,
         address: result.properties.address,
         lat: result.center[1],
         lon: result.center[0],
       })
     })
+
+    if (resultsType === 'origin') {
+      this.currentOriginResults = newResults;
+    }
+
+    if (resultsType === 'destination') {
+      this.currentDestinationResults = newResults;
+    }
+
   }
 
   getOriginSearchResults = () => {
     this.getData(this.originFetchUrl.get())
-      .then(searchResults => this.getFilteredSearchResults(searchResults, this.currentOriginResults))
+      .then(searchResults => this.getFilteredSearchResults(searchResults, 'origin'))
+      .then(()=> Renderer.renderPage())
       .then(() => console.log('Origin: ', this.currentOriginResults))
   }
 
   getDestinationSearchResults = () => {
     this.getData(this.destinationFetchUrl.get())
-    .then(searchResults => this.getFilteredSearchResults(searchResults, this.currentDestinationResults))
-    .then(() => console.log('Destination: ', this.currentDestinationResults))  }
+      .then(searchResults => this.getFilteredSearchResults(searchResults, 'destination'))
+      .then(()=> Renderer.renderPage())
+      .then(() => console.log('Destination: ', this.currentDestinationResults))
+  }
 }
 
 const mapBox = new MapBox();

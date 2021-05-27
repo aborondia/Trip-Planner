@@ -1,71 +1,54 @@
 class Renderer {
   static mainContainerEl = { get: () => document.querySelector('main') }
 
+  static buildOriginListHtml = () => {
+    let orginListHtml = '';
+
+    mapBox.currentOriginResults.forEach(result => {
+      orginListHtml += `
+    <li data-long=${result.lon} data-lat=${result.lat}>
+      <div class="name">${result.name}</div>
+      <div>${result.address}</div>
+    </li>`;
+    })
+
+    return orginListHtml;
+  }
+
+  static buildDestinationListHtml = () => {
+    let destinationListHtml = '';
+
+    mapBox.currentDestinationResults.forEach(result => {
+      destinationListHtml += `
+    <li data-long=${result.lon} data-lat=${result.lat}>
+      <div class="name">${result.name}</div>
+      <div>${result.address}</div>
+    </li>`;
+    })
+
+    return destinationListHtml;
+  }
+
   static renderPage = () => {
-    this.mainContainerEl.get().innerHTML = `<div class="origin-container">
-    <form id="origin-form">
-      <input placeholder="Find a starting location" type="text" />
-    </form>
+    this.mainContainerEl.get().innerHTML = `
+    <div class="origin-container">
+      <form id="origin-form">
+        <input placeholder="Find a starting location" type="text" />
+      </form>
     
-    <ul class="origins">
-      <li data-long="-97.19167" data-lat="49.815176" class="selected">
-        <div class="name">Manitoba Institute of Trades and Technology</div>
-        <div>130 Henlow Bay</div>
-      </li>
-      <li data-long="-97.1715329" data-lat="49.9256937">
-        <div class="name">Manitoba Avenue</div>
-        <div>Winnipeg</div>
-      </li>
-    </ul>
+      <ul class="origins">
+        ${this.buildOriginListHtml()}
+      </ul>
     </div>
     
     <div class="destination-container">
-    <form id="destination-form">
-      <input placeholder="Choose your Destination" type="text" />
-    </form>
+      <form id="destination-form">
+        <input placeholder="Choose your Destination" type="text" />
+      </form>
     
-    <ul class="destinations">
-      <li data-long="-97.154506" data-lat="49.821786">
-        <div class="name">IGI Bbq and Sushi Bistro</div>
-        <div>1845 Pembina Hwy</div>
-      </li>
-      <li data-long="-97.152205" data-lat="49.890455">
-        <div class="name">Sushi Gen</div>
-        <div>500 Portage Ave.</div>
-      </li>
-      <li data-long="-97.13782" data-lat="49.897657">
-        <div class="name">Blufish</div>
-        <div>179 Bannatyne Ave.</div>
-      </li>
-      <li data-long="-97.150206" data-lat="49.871956" class="selected">
-        <div class="name">Sushi Ya</div>
-        <div>659 Corydon</div>
-      </li>
-      <li data-long="-97.153992" data-lat="49.885416">
-        <div class="name">Wasabi on Broadway</div>
-        <div>588 Broadway Ave.</div>
-      </li>
-      <li data-long="-97.176892" data-lat="49.850975">
-        <div class="name">Wasabi Sabi</div>
-        <div>4-1360 Taylor Avenue</div>
-      </li>
-      <li data-long="-97.170829" data-lat="49.913081">
-        <div class="name">Magic Sushi &amp; Wok</div>
-        <div>272 McPhillips St</div>
-      </li>
-      <li data-long="-97.066106" data-lat="49.898617">
-        <div class="name">Asoyama Sushi</div>
-        <div>2-1575 Regent Ave.</div>
-      </li>
-      <li data-long="-97.158713" data-lat="49.787984">
-        <div class="name">Momo</div>
-        <div>2855 Pembina Hwy</div>
-      </li>
-      <li data-long="-97.157407" data-lat="49.803407">
-        <div class="name">Sushi Jet</div>
-        <div>3-2425 Pembina Hwy.</div>
-      </li>
-    </ul>
+      <ul class="destinations">
+        ${this.buildDestinationListHtml()}
+      </ul>
     </div>
     
     <div class="button-container">

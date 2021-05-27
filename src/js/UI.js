@@ -1,19 +1,20 @@
 class UI {
   constructor() {
-    this.mainContainerEl = document.querySelector('main');
-    this.originFormEl = document.getElementById('origin-form');
-    this.destinationFormEl = document.getElementById('destination-form');
-    this.originInputValue = { get: () => this.originFormEl.firstElementChild.value }
-    this.destinationInputValue = { get: () => this.destinationFormEl.firstElementChild.value }
+    this.originFormEl = { get: () => document.getElementById('origin-form') };
+    this.destinationFormEl = { get: () => document.getElementById('destination-form') };
+    this.originInputValue = { get: () => this.originFormEl.get().firstElementChild.value };
+    this.destinationInputValue = { get: () => this.destinationFormEl.get().firstElementChild.value };
   }
 
   handleFormSubmit(target) {
-    if (target === this.originFormEl) {
+    if (target === this.originFormEl.get()) {
       console.log(this.originInputValue.get());
+      Renderer.renderPage();
     }
 
-    if (target === this.destinationFormEl) {
+    if (target === this.destinationFormEl.get()) {
       console.log(this.destinationInputValue.get());
+      Renderer.renderPage();
     }
   }
 
@@ -21,7 +22,7 @@ class UI {
 
 const ui = new UI();
 
-ui.mainContainerEl.addEventListener('submit', (event) => {
+document.body.addEventListener('submit', (event) => {
   const target = event.target;
 
   event.preventDefault();

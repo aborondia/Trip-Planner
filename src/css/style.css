@@ -80,3 +80,7 @@ input:focus {
   font-size: 25px;
   align-self: center;
 }
+
+.ignore-click {
+  pointer-events: none;
+}

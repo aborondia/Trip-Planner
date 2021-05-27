@@ -2,7 +2,7 @@
   box-sizing: border-box;
 }
 
-body {
+main {
   margin: 0;
   display: grid;
   grid-template-columns: 2fr 2fr 1fr 4fr;
@@ -19,18 +19,21 @@ ul {
   padding: 0;
 }
 
-.origins > li, .destinations > li {
+.origins > li,
+.destinations > li {
   padding: 20px 20px;
   border: 1px solid #d3d3d3;
   margin: 5px 0;
 }
 
-.origins > li:hover, .destinations > li:hover{
+.origins > li:hover,
+.destinations > li:hover {
   background-color: #efefef;
   cursor: pointer;
 }
 
-.origins > li.selected, .destinations > li.selected {
+.origins > li.selected,
+.destinations > li.selected {
   background-color: #f2f3ff;
 }
 

@@ -20,19 +20,7 @@ class Renderer {
     return '';
   }
 
-  static buildOriginListHtml = () => {
-    let orginListHtml = '';
 
-    mapBox.currentOriginResults.forEach(result => {
-      orginListHtml += `
-    <li class="${this.checkIfSelected(result)}" data-lon=${result.lon} data-lat=${result.lat} data-address="${result.address}">
-      <div class="name ignore-click">${result.name}</div>
-      <div class="ignore-click">${result.address}</div>
-    </li>`;
-    })
-
-    return orginListHtml;
-  }
 
   static buildRouteHtml = () => {
     if (tripPlanner.currentTripPlans.length <= 0) {
@@ -90,19 +78,18 @@ ${this.buildDurationHtml(segment)}
 
     return tripHtml;
   }
+  static buildListHtml = (listType) => {
+    let listHtml = '';
 
-  static buildDestinationListHtml = () => {
-    let destinationListHtml = '';
-
-    mapBox.currentDestinationResults.forEach(result => {
-      destinationListHtml += `
-    <li data-lon=${result.lon} data-lat=${result.lat}>
+    mapBox[`current${listType}Results`].forEach(result => {
+      listHtml += `
+    <li class="${this.checkIfSelected(result)}" data-lon=${result.lon} data-lat=${result.lat} data-address="${result.address}">
       <div class="name ignore-click">${result.name}</div>
       <div class="ignore-click">${result.address}</div>
     </li>`;
     })
 
-    return destinationListHtml;
+    return listHtml;
   }
 
   static renderEmptyInputMessage = (emptyOriginMessage = '', emptyDestinationMessage = '') => {
@@ -119,7 +106,7 @@ ${this.buildDurationHtml(segment)}
       </form>
     
       <ul class="origins">
-        ${this.buildOriginListHtml()}
+        ${this.buildListHtml('Origin')}
       </ul>
     </div>
     
@@ -130,7 +117,7 @@ ${this.buildDurationHtml(segment)}
       </form>
     
       <ul class="destinations">
-        ${this.buildDestinationListHtml()}
+        ${this.buildListHtml('Destination')}
       </ul>
     </div>
     

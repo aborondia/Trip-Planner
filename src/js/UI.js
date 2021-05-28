@@ -10,13 +10,38 @@ class UI {
     // don't clear other form input on submit
     if (target === this.originFormEl.get()) {
       mapBox.getOriginSearchResults();
-      // Renderer.renderPage();
     }
 
     if (target === this.destinationFormEl.get()) {
       mapBox.getDestinationSearchResults();
-      // Renderer.renderPage();
     }
+  }
+
+  static checkIfInputEmpty = () => {
+    const originEmptyMessage = 'Please select an origin.'
+    const destinationEmptyMessage = 'Please select a destination.'
+
+
+    if (this.currentOriginEl === '' && this.currentDestinationEl === '') {
+      Renderer.renderEmptyInputMessage(originEmptyMessage, destinationEmptyMessage);
+      return;
+    }
+
+    if (this.currentOriginEl === '') {
+      Renderer.renderEmptyInputMessage(originEmptyMessage, '');
+      return;
+    }
+
+    if (this.currentDestinationEl === '') {
+      Renderer.renderEmptyInputMessage('', destinationEmptyMessage);
+      return;
+    }
+
+    tripPlanner.getTripPlan();
+
+    this.currentOriginEl = '';
+    this.currentDestinationEl = '';
+    tripPlanner.selectedTripPlan = {};
   }
 
   static selectNewResult = (target, typeOfResult) => {
@@ -35,17 +60,19 @@ class UI {
 
       if (listSelected.classList.contains('origins')) {
         this.currentOriginEl = target;
+
         this.selectNewResult(target, 'origins');
       }
 
       if (listSelected.classList.contains('destinations')) {
         this.currentDestinationEl = target;
+
         this.selectNewResult(target, 'destinations');
       }
     }
 
     if (target.classList.contains('plan-trip')) {
-      tripPlanner.getTripPlan();
+      this.checkIfInputEmpty();
     }
 
     if (target.classList.contains('trip-plan')) {

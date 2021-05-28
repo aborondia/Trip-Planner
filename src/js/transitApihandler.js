@@ -25,7 +25,6 @@ class TripPlanner {
       case 'transfer': return segment.times.durations.waiting;
     }
   }
-
   getWalkInstructions = (segment, filteredSegment) => {
     const durations = segment.times.durations;
     const type = segment.type;
@@ -118,7 +117,7 @@ class TripPlanner {
         durations[type] = 0;
       }
     }
-    
+
     return durations;
   }
 

@@ -1,5 +1,7 @@
 class Renderer {
   static mainContainerEl = { get: () => document.querySelector('main') }
+  static emptyOriginParagraphEl = { get: () => document.getElementById('empty-origin') };
+  static emptyDestinationParagraphEl = { get: () => document.getElementById('empty-destination') };
   static icons = {
     walking: '<i class="fas fa-walking" aria-hidden="true"></i>',
     riding: '<i class="fas fa-bus" aria-hidden="true"></i>',
@@ -8,12 +10,22 @@ class Renderer {
     total: '<i class="fas fa-equals" aria-hidden="true"></i>',
   }
 
+  static checkIfSelected = (result) => {
+    if (UI.currentOriginEl !== '') {
+      if (UI.currentOriginEl.dataset.address === result.address) {
+        return 'selected'
+      }
+    }
+
+    return '';
+  }
+
   static buildOriginListHtml = () => {
     let orginListHtml = '';
 
     mapBox.currentOriginResults.forEach(result => {
       orginListHtml += `
-    <li data-lon=${result.lon} data-lat=${result.lat}>
+    <li class="${this.checkIfSelected(result)}" data-lon=${result.lon} data-lat=${result.lat} data-address="${result.address}">
       <div class="name ignore-click">${result.name}</div>
       <div class="ignore-click">${result.address}</div>
     </li>`;
@@ -56,7 +68,7 @@ class Renderer {
         durationsHtml += `${this.icons[key]}<span>${value} min</span>`;
       }
 
-      durationsHtml += '</td>';
+    durationsHtml += '</td>';
     return durationsHtml;
   }
 
@@ -93,9 +105,15 @@ ${this.buildDurationHtml(segment)}
     return destinationListHtml;
   }
 
+  static renderEmptyInputMessage = (emptyOriginMessage = '', emptyDestinationMessage = '') => {
+    this.emptyOriginParagraphEl.get().innerHTML = emptyOriginMessage;
+    this.emptyDestinationParagraphEl.get().innerHTML = emptyDestinationMessage;
+  }
+
   static renderPage = () => {
     this.mainContainerEl.get().innerHTML = `
     <div class="origin-container">
+      <p id="empty-origin"></p>
       <form id="origin-form">
         <input placeholder="Find a starting location" type="text" />
       </form>
@@ -106,6 +124,7 @@ ${this.buildDurationHtml(segment)}
     </div>
     
     <div class="destination-container">
+      <p id="empty-destination"></p>
       <form id="destination-form">
         <input placeholder="Choose your Destination" type="text" />
       </form>

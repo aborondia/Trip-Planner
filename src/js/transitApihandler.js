@@ -20,7 +20,6 @@ class TripPlanner {
   getFilteredTripPlan = (plan, newPlan) => {
     const planSegments = [];
 
-    console.log(plan)
     plan.segments.forEach(segment => {
       const filteredSegment = {}
 
@@ -75,6 +74,7 @@ class TripPlanner {
   getTripPlan = () => {
     DataFetcher.getData(tripPlanner.fetchUrl.get())
       .then(tripPlans => this.getFilteredTripPlans(tripPlans.plans))
+      .then(() => Renderer.renderPage())
       .then(() => console.log(this.currentTripPlans))
   }
 }

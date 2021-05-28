@@ -64,21 +64,26 @@ input:focus {
   width: 100%;
 }
 
-.my-trip {
+.my-trip, #available-routes {
   width: 75%;
   margin: auto;
 }
 
-.my-trip li {
+.my-trip li, #available-routes li {
   margin: 10px 0px;
   font-size: 17px;
   display: flex;
 }
 
-.my-trip i {
+.my-trip i, #available-routes i, #available-routes p {
   margin-right: 15px;
   font-size: 25px;
   align-self: center;
+}
+
+#available-routes p{
+  padding: 2rem;
+  background-color: #f2f3ff;
 }
 
 .ignore-click {

@@ -15,11 +15,34 @@ class Renderer {
     return orginListHtml;
   }
 
-  static buildRouteHtml = ()=>{
-    return '';
+  static buildRouteHtml = (icons) => {
+    if (tripPlanner.currentTripPlans.length <= 0) {
+      return '';
+    }
+
+    let tripPlansHtml = `
+    <div id="available-routes">
+    <h2>Available Routes:</h2>
+    `;
+
+    tripPlanner.currentTripPlans.forEach(plan => {
+      console.log(plan)
+      tripPlansHtml += `
+      <h3>Route ${plan.planNumber}</h3>
+      <p>
+${icons.walking}${plan.durations.walking}  
+${icons.riding}${plan.durations.riding}  
+${icons.waiting}${plan.durations.waiting}  
+${icons.total}${plan.durations.total}  
+</p>`;
+    })
+
+    tripPlansHtml += '</div>';
+
+    return tripPlansHtml;
   }
 
-  static buildTripHtml = ()=>{
+  static buildTripHtml = () => {
     return '';
   }
 
@@ -38,6 +61,14 @@ class Renderer {
   }
 
   static renderPage = () => {
+    const icons = {
+      walking: '<i class="fas fa-walking" aria-hidden="true"></i>',
+      riding: '<i class="fas fa-bus" aria-hidden="true"></i>',
+      waiting: '<i class="fas fa-pause-circle" aria-hidden="true"></i>',
+      transfer: '<i class="fas fa-ticket-alt" aria-hidden="true"></i>',
+      total: '<i class="fas fa-equals" aria-hidden="true"></i>',
+    }
+
     this.mainContainerEl.get().innerHTML = `
     <div class="origin-container">
       <form id="origin-form">
@@ -64,11 +95,9 @@ class Renderer {
     </div>
     
     <div class="bus-container">
-    <ul id="available-routes">
-      ${this.buildRouteHtml()}
-    </ul>
+      ${this.buildRouteHtml(icons)}
     <ul class="my-trip">
-    ${this.buildTripHtml()}
+    ${this.buildTripHtml(icons)}
       <li>
         <i class="fas fa-walking" aria-hidden="true"></i>Walk for 15 minutes
         to stop #61121 - Southbound Dovercourt at Falcon Ridge

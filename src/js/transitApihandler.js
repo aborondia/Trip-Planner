@@ -31,7 +31,7 @@ class TripPlanner {
     const type = segment.type;
     let instructions1 = `Walk to `;
 
-    if (segment.from.stop !== undefined) {
+    if (segment.from !== undefined && segment.from.stop !== undefined) {
       const stopKey = segment.from.stop.key;
       const stopName = segment.from.stop.name;
       instructions1 = `Walk from stop #${stopKey} - ${stopName} to `
@@ -39,7 +39,7 @@ class TripPlanner {
 
     let instructions2 = 'your destination.';
 
-    if (segment.to.stop !== undefined) {
+    if (segment.to !== undefined && segment.to.stop !== undefined) {
       const destinationKey = segment.to.stop.key;
       const destinationName = segment.to.stop.name;
       instructions2 = `stop #${destinationKey} - ${destinationName}`;
@@ -83,7 +83,7 @@ class TripPlanner {
       let filteredSegment = {}
 
       filteredSegment.type = segment.type;
-      filteredSegment.times = this.getSegmentTimes(segment);
+      filteredSegment.times = this.getDurations(segment);
 
       if (segment.type === 'walk') {
         this.getWalkInstructions(segment, filteredSegment);
@@ -105,13 +105,30 @@ class TripPlanner {
     return newPlan;
   }
 
+  getDurations = (segment) => {
+    const durations = {
+      walking: segment.times.durations.walking,
+      riding: segment.times.durations.riding,
+      waiting: segment.times.durations.waiting,
+      total: segment.times.durations.total,
+    };
+
+    for (let [type, duration] of Object.entries(durations)) {
+      if (duration === undefined) {
+        durations[type] = 0;
+      }
+    }
+    
+    return durations;
+  }
+
   getFilteredTripPlans = (tripPlans) => {
     const filteredPlans = [];
 
     tripPlans.forEach(plan => {
       const newPlan = {
         planNumber: plan.number,
-        durations: plan.times.durations,
+        durations: this.getDurations(plan),
       }
 
       filteredPlans.push(this.getFilteredTripPlan(plan, newPlan))

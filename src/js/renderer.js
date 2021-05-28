@@ -64,13 +64,6 @@ class Renderer {
     if (tripPlanner.selectedTripPlan.planSegments === undefined) {
       return '';
     }
-    const example = `
-    <li>
-    <i class="fas fa-walking" aria-hidden="true"></i>Walk for 1 minutes to
-    your destination.
-    </li>`;
-
-    console.log(tripPlanner.selectedTripPlan)
 
     let tripHtml = '';
 
@@ -128,7 +121,7 @@ ${this.buildDurationHtml(segment)}
     
     <div class="bus-container">
       ${this.buildRouteHtml()}
-    <table class="my-trip">
+    <table id="my-trip">
     ${this.buildTripHtml()}
     </table>
           </div>`;

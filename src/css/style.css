@@ -75,10 +75,27 @@ input:focus {
   display: flex;
 }
 
-.my-trip i, #available-routes i, #available-routes p {
+#available-routes i, #available-routes p {
   margin-right: 15px;
   font-size: 25px;
   align-self: center;
+}
+
+.my-trip i {
+  margin-right: 0;
+  font-size: 25px;
+  align-self: center;
+  font-weight: bold;
+}
+
+.my-trip td{
+  width: 1rem;
+  font-style: italic;
+}
+
+.my-trip td span{
+  font-weight: bold;
+  margin-right: .5rem;
 }
 
 #available-routes p{

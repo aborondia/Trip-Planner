@@ -27,7 +27,7 @@ class TripPlanner {
   }
 
   getWalkInstructions = (segment, filteredSegment) => {
-    const duration = segment.times.durations.walking;
+    const durations = segment.times.durations;
     const type = segment.type;
     let instructions1 = `Walk to `;
 
@@ -37,7 +37,7 @@ class TripPlanner {
       instructions1 = `Walk from stop #${stopKey} - ${stopName} to `
     }
 
-    let instructions2 = 'your destination';
+    let instructions2 = 'your destination.';
 
     if (segment.to.stop !== undefined) {
       const destinationKey = segment.to.stop.key;
@@ -47,31 +47,29 @@ class TripPlanner {
 
     filteredSegment.type = type;
     filteredSegment.instructions = instructions1 + instructions2;
-    filteredSegment.duration = duration;
+    filteredSegment.durations = durations;
   }
 
   getRideInstructions = (segment, filteredSegment) => {
-    console.log(segment)
-    const duration = segment.times.durations.riding;
+    const durations = segment.times.durations;
     const type = segment.type;
     const busNumber = segment.bus.key;
     const routeName = segment.route.name;
-    const instructions = `Ride the #${busNumber} - ${routeName}`;
+    const instructions = `Ride the #${busNumber} - ${routeName}.`;
 
     filteredSegment.type = type;
     filteredSegment.instructions = instructions;
-    filteredSegment.duration = duration;
+    filteredSegment.durations = durations;
   }
 
   getTransferInstructions = (segment, filteredSegment) => {
-    console.log(segment)
     const durations = segment.times.durations;
     const type = segment.type;
     const stopNumber = segment.from.stop.key;
     const stopName = segment.from.stop.name;
     const destinationNumber = segment.to.stop.key;
     const destinationName = segment.to.stop.name;
-    let instructions = `Transfer from stop #${stopNumber} - ${stopName} to stop #${destinationNumber} - ${destinationName}`;
+    let instructions = `Transfer from stop #${stopNumber} - ${stopName} to stop #${destinationNumber} - ${destinationName}.`;
 
     filteredSegment.type = type;
     filteredSegment.instructions = instructions;

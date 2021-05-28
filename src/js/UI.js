@@ -7,6 +7,7 @@ class UI {
   static currentDestinationEl = '';
 
   static handleFormSubmitEvent(target) {
+    // don't clear other form input on submit
     if (target === this.originFormEl.get()) {
       mapBox.getOriginSearchResults();
       // Renderer.renderPage();
@@ -26,7 +27,6 @@ class UI {
     })
 
     target.classList.add('selected');
-    console.log('Current Origin: ', this.currentOriginEl, '\nCurrent Destination: ', this.currentDestinationEl);
   }
 
   static handleClickEvent = (target) => {
@@ -46,6 +46,14 @@ class UI {
 
     if (target.classList.contains('plan-trip')) {
       tripPlanner.getTripPlan();
+    }
+
+    if (target.classList.contains('trip-plan')) {
+      const selectedPlanNumber = target.dataset.plan;
+
+      tripPlanner.selectedTripPlan = tripPlanner.currentTripPlans.find(plan => plan.planNumber.toString() === selectedPlanNumber);
+      tripPlanner.currentTripPlans = [];
+      Renderer.renderPage();
     }
   }
 

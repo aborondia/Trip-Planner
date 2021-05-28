@@ -86,6 +86,10 @@ input:focus {
   background-color: #f2f3ff;
 }
 
+.trip-plan:hover{
+  cursor: pointer;
+}
+
 .ignore-click {
   pointer-events: none;
 }

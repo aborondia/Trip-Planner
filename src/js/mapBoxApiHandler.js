@@ -39,14 +39,14 @@ class MapBox {
     DataFetcher.getData(this.originFetchUrl.get())
       .then(searchResults => this.getFilteredSearchResults(searchResults, 'origin'))
       .then(()=> Renderer.renderPage())
-      .then(() => console.log('Origin: ', this.currentOriginResults))
+      .catch((error)=> console.log(error))
   }
 
   getDestinationSearchResults = () => {
     DataFetcher.getData(this.destinationFetchUrl.get())
       .then(searchResults => this.getFilteredSearchResults(searchResults, 'destination'))
       .then(()=> Renderer.renderPage())
-      .then(() => console.log('Destination: ', this.currentDestinationResults))
+      .catch((error)=> console.log(error))
   }
 }
 

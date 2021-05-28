@@ -141,6 +141,7 @@ class TripPlanner {
       .then(tripPlans => this.getFilteredTripPlans(tripPlans.plans))
       .then(() => Renderer.renderPage())
       .then(() => console.log(this.currentTripPlans))
+      .catch((error) => console.log(error))
   }
 }
 

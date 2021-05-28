@@ -20,8 +20,6 @@ class Renderer {
     return '';
   }
 
-
-
   static buildRouteHtml = () => {
     if (tripPlanner.currentTripPlans.length <= 0) {
       return '';

@@ -12,20 +12,22 @@ class UI {
   static currentOriginEl = '';
   static currentDestinationEl = '';
 
-  static checkIfSelectionsSame = () => {
+  static selectionsSame = () => {
     const originName = this.currentOriginEl.dataset.name;
+    const originAddress = this.currentOriginEl.dataset.address
     const destinationName = this.currentDestinationEl.dataset.name;
+    const destinationAddress = this.currentDestinationEl.dataset.address;
 
-    if (originName === destinationName) {
+    if (originName === destinationName && originAddress === destinationAddress) {
       Renderer.routeErrorMessage.set('Please select two different locations.')
       Renderer.renderPage();
-      return false;
+      return true;
     }
 
-    return true;
+    return false;
   }
 
-  static checkIfBothLocationsSelected = () => {
+  static bothLocationsSelected = () => {
     const originEmptyMessage = 'Please select an origin.'
     const destinationEmptyMessage = 'Please select a destination.'
 
@@ -35,7 +37,7 @@ class UI {
       Renderer.destinationErrorMessage.set(destinationEmptyMessage);
       Renderer.renderPage();
 
-      return false;
+      return true;
     }
 
     if (this.currentOriginEl === '') {
@@ -43,7 +45,7 @@ class UI {
       Renderer.destinationErrorMessage.set('');
       Renderer.renderPage();
 
-      return false;
+      return true;
     }
 
     if (this.currentDestinationEl === '') {
@@ -51,14 +53,14 @@ class UI {
       Renderer.originErrorMessage.set('');
       Renderer.renderPage();
       
-      return false;
+      return true;
     }
 
-    return true;
+    return false;
   }
 
   static beginTripPlanning = () => {
-    if (this.checkIfBothLocationsSelected() && this.checkIfSelectionsSame()) {
+    if (!this.bothLocationsSelected() && !this.selectionsSame()) {
       Renderer.routeErrorMessage.set('');
       tripPlanner.getTripPlan();
 
@@ -108,7 +110,7 @@ class UI {
     }
   }
 
-  static inputEmpty = (inputType) => {
+  static inputIsEmpty = (inputType) => {
     const originInputValue = this.originInputValue.get();
     const destinationInputValue = this.destinationInputValue.get();
 
@@ -129,14 +131,14 @@ class UI {
 
   static handleFormSubmitEvent(target) {
     if (target === this.originFormEl.get()) {
-      if (!this.inputEmpty('origin')) {
+      if (!this.inputIsEmpty('origin')) {
         mapBox.getSearchResults('origin');
         Renderer.originErrorMessage.set('')
       }
     }
 
     if (target === this.destinationFormEl.get()) {
-      if (!this.inputEmpty('destination')) {
+      if (!this.inputIsEmpty('destination')) {
         mapBox.getSearchResults('destination');
         Renderer.destinationErrorMessage.set('')
       }

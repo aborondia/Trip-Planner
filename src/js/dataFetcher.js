@@ -7,9 +7,9 @@ class DataFetcher {
     }
 
     const data = await response.json();
-
     if (data.plans !== undefined && data.plans.length === 0) {
-      Renderer.renderPage('no plans');
+      Renderer.routeErrorMessage.set('No routes available')
+      Renderer.renderPage();
       throw new Error('No plans available');
     }
 

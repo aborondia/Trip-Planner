@@ -9,8 +9,8 @@ class Renderer {
     set: (message) => document.getElementById('destination-error').textContent = message
   }
   static routeErrorMessage = {
-    get: () => document.querySelector('H2.error').textContent,
-    set: (message) => document.querySelector('H2.error').textContent = message
+    get: () => document.getElementById('route-error').textContent,
+    set: (message) => document.getElementById('route-error').textContent = message
   }
   static icons = {
     walking: '<i class="fas fa-walking" aria-hidden="true"></i>',
@@ -20,54 +20,6 @@ class Renderer {
     total: '<i class="fas fa-equals" aria-hidden="true"></i>',
   }
 
-  static checkIfSelected = (result) => {
-    if (UI.currentOriginEl !== '') {
-      if (UI.currentOriginEl.dataset.name === result.name) {
-        return 'selected'
-      }
-    }
-
-    return '';
-  }
-
-  static buildRouteHtml = () => {
-    if (tripPlanner.currentTripPlans.length <= 0) {
-      return '';
-    }
-    const recommendedPlan = tripPlanner.currentTripPlans.recommendedPlan;
-    const alternatePlans = tripPlanner.currentTripPlans.alternatePlans;
-    let tripPlansHtml = `
-    <div id="available-routes">
-    <h1>Available Routes</h1>
-    <h2>Recommended:</h2>
-    <h3>Route ${recommendedPlan.planNumber}</h3>
-    <div class="trip-plan" data-plan=${recommendedPlan.planNumber}>
-    <p class="ignore-click">
-    ${this.icons.walking}${recommendedPlan.durations.walking}min
-    ${this.icons.riding}${recommendedPlan.durations.riding}min
-    ${this.icons.waiting}${recommendedPlan.durations.waiting}min
-    ${this.icons.total}${recommendedPlan.durations.total}min
-    </p>
-    </div>
-    <h2>Alternate:</h2>`;
-
-    alternatePlans.forEach(plan => {
-      tripPlansHtml += `
-      <h3>Route ${plan.planNumber}</h3>
-      <div class="trip-plan" data-plan=${plan.planNumber}>
-      <p class="ignore-click">
-        ${this.icons.walking}${plan.durations.walking}min
-        ${this.icons.riding}${plan.durations.riding}min
-        ${this.icons.waiting}${plan.durations.waiting}min
-        ${this.icons.total}${plan.durations.total}min
-        </p>
-      </div>`;
-    })
-
-    tripPlansHtml += '</div>';
-
-    return tripPlansHtml;
-  }
   static buildDurationHtml = (segment) => {
     let durationsHtml = '<td>';
 
@@ -102,36 +54,48 @@ ${this.buildDurationHtml(segment)}
 
     return tripHtml;
   }
-  static buildListHtml = (listType) => {
-    let listHtml = '';
-    const input = document.getElementById(`${listType.toLowerCase()}-input`);
 
-    // if (input !== null && input.value !== '') {
-    //   return '<p class="error">No results found</p>';
-    // }
+  static buildRouteHtml = () => {
+    const alternatePlans = tripPlanner.currentTripPlans.alternatePlans;
+    const recommendedPlan = tripPlanner.currentTripPlans.recommendedPlan;
+    let tripPlansHtml = `
+    <div id="available-routes">
+      <h1>Available Routes</h1>
+      <h2>Recommended:</h2>`;
 
-    mapBox[`current${listType}Results`].forEach(result => {
-      listHtml += `
-    <li class="${this.checkIfSelected(result)}" data-lon=${result.lon} data-lat=${result.lat} data-name="${result.name}">
-      <div class="name ignore-click">${result.name}</div>
-      <div class="ignore-click">${result.address}</div>
-    </li>`;
+    if (tripPlanner.currentTripPlans.length <= 0) {
+      return '';
+    }
+
+    tripPlansHtml += `
+    <h3>Route ${recommendedPlan.planNumber}</h3>
+    <div class="trip-plan" data-plan=${recommendedPlan.planNumber}>
+    <p class="ignore-click">
+    ${this.icons.walking}${recommendedPlan.durations.walking}min
+    ${this.icons.riding}${recommendedPlan.durations.riding}min
+    ${this.icons.waiting}${recommendedPlan.durations.waiting}min
+    ${this.icons.total}${recommendedPlan.durations.total}min
+    </p>
+    </div>
+    <h2>Alternate:</h2>`;
+
+    alternatePlans.forEach(plan => {
+      tripPlansHtml += `
+      <h3>Route ${plan.planNumber}</h3>
+      <div class="trip-plan" data-plan=${plan.planNumber}>
+      <p class="ignore-click">
+        ${this.icons.walking}${plan.durations.walking}min
+        ${this.icons.riding}${plan.durations.riding}min
+        ${this.icons.waiting}${plan.durations.waiting}min
+        ${this.icons.total}${plan.durations.total}min
+        </p>
+      </div>`;
     })
 
-    return listHtml;
+    tripPlansHtml += '</div>';
+
+    return tripPlansHtml;
   }
-
-  static getErrorMessage = (errorType) => {
-    const noPlansHtml = `I'm sorry, there are no available results right now. Please try again later.`;
-    const sameSelectionsHtml = `Please select two different locations.`;
-
-    switch (errorType) {
-      case 'no plans': return noPlansHtml;
-      case 'same selections': return sameSelectionsHtml;
-      default: return '';
-    }
-  }
-
   static getErrorText = (typeOfInput) => {
     if (typeOfInput === 'origin') {
       if (document.getElementById('origin-error') !== null) {
@@ -146,7 +110,7 @@ ${this.buildDurationHtml(segment)}
     }
 
     if (typeOfInput === 'same-selection') {
-      if (document.querySelector('H2.error') !== null) {
+      if (document.getElementById('route-error') !== null) {
         return this.routeErrorMessage.get();
       }
     }
@@ -154,14 +118,14 @@ ${this.buildDurationHtml(segment)}
     return '';
   }
 
-  static getInputValue = (valueToget) => {
-    if (valueToget === 'origin') {
+  static getInputValue = (valueToGet) => {
+    if (valueToGet === 'origin') {
       if (document.getElementById('origin-form') !== null) {
         return UI.originInputValue.get();
       }
     }
 
-    if (valueToget === 'destination') {
+    if (valueToGet === 'destination') {
       if (document.getElementById('destination-form') !== null) {
         return UI.destinationInputValue.get();
       }
@@ -170,7 +134,31 @@ ${this.buildDurationHtml(segment)}
     return '';
   }
 
-  static renderPage = (errorType = '') => {
+  static checkIfSelected = (result) => {
+    if (UI.currentOriginEl !== '') {
+      if (UI.currentOriginEl.dataset.name === result.name && UI.currentOriginEl.dataset.address === result.address) {
+        return 'selected';
+      }
+    }
+
+    return '';
+  }
+
+  static buildListHtml = (listType) => {
+    let listHtml = '';
+
+    mapBox[`current${listType}Results`].forEach(result => {
+      listHtml += `
+      <li class="${this.checkIfSelected(result)}" data-lon=${result.lon} data-lat=${result.lat} data-name="${result.name} data-address=${result.address}">
+        <div class="name ignore-click">${result.name}</div>
+        <div class="ignore-click">${result.address}</div>
+      </li>`;
+    })
+
+    return listHtml;
+  }
+
+  static renderPage = () => {
     this.mainContainerEl.get().innerHTML = `
     <div class="origin-container">
       <p id="origin-error" class="error">${this.getErrorText('origin')}</p>
@@ -199,12 +187,14 @@ ${this.buildDurationHtml(segment)}
     </div>
     
     <div class="bus-container">
-    <h2 class="error">${this.getErrorText('same-selection')}</h2>
+      <h2 id="route-error" class="error">${this.getErrorText('same-selection')}</h2>
       ${this.buildRouteHtml()}
-    <table id="my-trip">
-    ${this.buildTripHtml()}
-    </table>
-          </div>`;
+      <table id="my-trip">
+        <tbody>
+        ${this.buildTripHtml()}
+        </tbody>
+      </table>
+    </div>`;
   }
 }
 

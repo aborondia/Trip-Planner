@@ -33,7 +33,7 @@ function htmlTask() {
 }
 
 function scriptsTask() {
-  return src(['src/js/renderer.js','src/js/navigator.js', 'src/js/UI.js', 'src/js/transitApiHandler.js', 'src/js/mapBoxApiHandler.js'])
+  return src(['src/js/dataFetcher.js', 'src/js/mapBoxApiHandler.js', 'src/js/transitApiHandler.js', 'src/js/renderer.js', 'src/js/navigator.js', 'src/js/UI.js'])
     .pipe(crLfReplace())
     .pipe(sourcemaps.init())
     .pipe(concat('bundle.js'))

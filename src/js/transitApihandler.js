@@ -23,29 +23,29 @@ class TripPlanner {
     return alternatePlans;
   }
 
+  filterToLowestDuration = (arrayToFilter, filterType) => {
+    arrayToFilter.forEach(plan => {
+      arrayToFilter = arrayToFilter.filter(planToFilter => planToFilter.durations[filterType] <= plan.durations[filterType]);
+    })
+
+    return arrayToFilter;
+  }
+
   getRecommendedPlan = (filteredPlans) => {
     let arrayToFilter = [...filteredPlans];
 
-    filteredPlans.forEach(plan => {
-      arrayToFilter = arrayToFilter.filter(planToFilter => planToFilter.durations.total <= plan.durations.total);
-    })
+    arrayToFilter = this.filterToLowestDuration(arrayToFilter, 'total')
 
     if (arrayToFilter.length > 1) {
-      arrayToFilter.forEach(plan => {
-        arrayToFilter = arrayToFilter.filter(planToFilter => planToFilter.durations.walking <= plan.durations.walking);
-      })
+      arrayToFilter = this.filterToLowestDuration(arrayToFilter, 'walking')
     }
 
     if (arrayToFilter.length > 1) {
-      arrayToFilter.forEach(plan => {
-        arrayToFilter = arrayToFilter.filter(planToFilter => planToFilter.durations.waiting <= plan.durations.waiting);
-      })
+      arrayToFilter = this.filterToLowestDuration(arrayToFilter, 'waiting')
     }
 
     if (arrayToFilter.length > 1) {
-      arrayToFilter.forEach(plan => {
-        arrayToFilter = arrayToFilter.filter(planToFilter => planToFilter.durations.riding <= plan.durations.riding);
-      })
+      arrayToFilter = this.filterToLowestDuration(arrayToFilter, 'riding')
     }
 
     return arrayToFilter[0];

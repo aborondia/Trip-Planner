@@ -6,7 +6,7 @@ class MapBox {
     this.bboxWinnipeg = '-97.325875,49.766204,-96.953987,49.99275';
     this.originFetchUrl = { get: () => `https://api.mapbox.com/geocoding/v5/mapbox.places/${UI.originInputValue.get()}.json?bbox=${this.bboxWinnipeg}&access_token=${this.accessToken}&limit=10` };
     this.destinationFetchUrl = { get: () => `https://api.mapbox.com/geocoding/v5/mapbox.places/${UI.destinationInputValue.get()}.json?bbox=${this.bboxWinnipeg}&access_token=${this.accessToken}&limit=10` };
-    this.userPositionFetchUrl = { get: () => `https://api.mapbox.com/geocoding/v5/mapbox.places/${Navigator.coords.longitude},${Navigator.coords.latitude}.json?access_token=${this.accessToken}` };
+    this.userFetchUrl = { get: () => `https://api.mapbox.com/geocoding/v5/mapbox.places/${Navigator.coords.longitude},${Navigator.coords.latitude}.json?access_token=${this.accessToken}` };
   }
   checkForEmptyResults = (typeOfResults) => {
     const emptyResultsMessage = 'No results found';
@@ -52,17 +52,7 @@ class MapBox {
   }
 
   getFetchUrl = (typeOfResults) => {
-    if (typeOfResults === 'origin') {
-      return this.originFetchUrl.get();
-    }
-
-    if (typeOfResults === 'destination') {
-      return this.destinationFetchUrl.get();
-    }
-
-    if (typeOfResults === 'user-origin') {
-      return this.userPositionFetchUrl.get();
-    }
+    return this[`${typeOfResults}FetchUrl`].get();
   }
 
   getSearchResults = (typeOfResults) => {
@@ -79,7 +69,7 @@ class MapBox {
   }
 
   getUserOrigin = () => {
-    const urlToFetch = this.getFetchUrl('user-origin')
+    const urlToFetch = this.getFetchUrl('user')
     DataFetcher.getData(urlToFetch)
       .then(() => {
         Navigator.usingUserLocation = true;

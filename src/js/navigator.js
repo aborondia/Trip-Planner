@@ -3,7 +3,7 @@ class Navigator {
   static usingUserLocation = false;
 
   static getLocation = async () => {
-    return new Promise((resolve) => {
+    return new Promise(() => {
       navigator.geolocation.getCurrentPosition((position) => {
         Navigator.coords = position.coords;
         mapBox.getUserOrigin(position)

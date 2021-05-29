@@ -1,8 +1,14 @@
 class UI {
   static originFormEl = { get: () => document.getElementById('origin-form') };
   static destinationFormEl = { get: () => document.getElementById('destination-form') };
-  static originInputValue = { get: () => this.originFormEl.get().firstElementChild.value };
-  static destinationInputValue = { get: () => this.destinationFormEl.get().firstElementChild.value };
+  static originInputValue = {
+    get: () => this.originFormEl.get().firstElementChild.value,
+    set: () => this.originFormEl.get().firstElementChild.value = ''
+  };
+  static destinationInputValue = {
+    get: () => this.destinationFormEl.get().firstElementChild.value,
+    set: () => this.destinationFormEl.get().firstElementChild.value = ''
+  };
   static currentOriginEl = '';
   static currentDestinationEl = '';
 
@@ -24,16 +30,17 @@ class UI {
   }
 
   static handleFormSubmitEvent(target) {
-    // don't clear other form input on submit
     if (target === this.originFormEl.get()) {
       if (!this.inputEmpty('origin')) {
         mapBox.getSearchResults('origin');
+        this.originInputValue.set();
       }
     }
 
     if (target === this.destinationFormEl.get()) {
       if (!this.inputEmpty('destination')) {
         mapBox.getSearchResults('destination');
+        this.destinationInputValue.set();
       }
     }
   }
@@ -135,3 +142,4 @@ document.body.addEventListener('click', (event) => {
 
   UI.handleClickEvent(target);
 })
+

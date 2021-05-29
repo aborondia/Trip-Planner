@@ -120,12 +120,28 @@ ${this.buildDurationHtml(segment)}
     }
   }
 
+  static getInputValue = (valueToget) => {
+    if (valueToget === 'origin') {
+      if (document.getElementById('origin-form') !== null) {
+        return UI.originInputValue.get();
+      }
+    }
+
+    if (valueToget === 'destination') {
+      if (document.getElementById('destination-form') !== null) {
+        return UI.destinationInputValue.get();
+      }
+    }
+
+    return '';
+  }
+
   static renderPage = (errorType = '') => {
     this.mainContainerEl.get().innerHTML = `
     <div class="origin-container">
       <p id="empty-origin"></p>
       <form id="origin-form">
-        <input placeholder="Find a starting location" type="text" />
+        <input placeholder="Find a starting location" type="text" value="${this.getInputValue('origin')}"/>
       </form>
     
       <ul class="origins">
@@ -136,7 +152,7 @@ ${this.buildDurationHtml(segment)}
     <div class="destination-container">
       <p id="empty-destination"></p>
       <form id="destination-form">
-        <input placeholder="Choose your Destination" type="text" />
+        <input placeholder="Choose your Destination" type="text" value="${this.getInputValue('destination')}"/>
       </form>
     
       <ul class="destinations">

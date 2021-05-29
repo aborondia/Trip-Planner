@@ -17,31 +17,48 @@ class UI {
     }
   }
 
-  static checkIfInputEmpty = () => {
+  static checkIfBothLocationsSelected = () => {
     const originEmptyMessage = 'Please select an origin.'
     const destinationEmptyMessage = 'Please select a destination.'
 
 
     if (this.currentOriginEl === '' && this.currentDestinationEl === '') {
-      Renderer.renderEmptyInputMessage(originEmptyMessage, destinationEmptyMessage);
-      return;
+      Renderer.renderEmptySelectionMessage(originEmptyMessage, destinationEmptyMessage);
+      return false;
     }
 
     if (this.currentOriginEl === '') {
-      Renderer.renderEmptyInputMessage(originEmptyMessage, '');
-      return;
+      Renderer.renderEmptySelectionMessage(originEmptyMessage, '');
+      return false;
     }
 
     if (this.currentDestinationEl === '') {
-      Renderer.renderEmptyInputMessage('', destinationEmptyMessage);
-      return;
+      Renderer.renderEmptySelectionMessage('', destinationEmptyMessage);
+      return false;
     }
 
-    tripPlanner.getTripPlan();
+    return true;
+  }
 
-    this.currentOriginEl = '';
-    this.currentDestinationEl = '';
-    tripPlanner.selectedTripPlan = {};
+  static checkIfSelectionsSame = () => {
+    const originAddress = this.currentOriginEl.dataset.address;
+    const destinationAddress = this.currentDestinationEl.dataset.address;
+    if (originAddress === destinationAddress) {
+      Renderer.renderPage('same selections');
+      return false;
+    }
+
+    return true;
+  }
+
+  static checkForvalidSelections = () => {
+    if (this.checkIfBothLocationsSelected() && this.checkIfSelectionsSame()) {
+      tripPlanner.getTripPlan();
+
+      this.currentOriginEl = '';
+      this.currentDestinationEl = '';
+      tripPlanner.selectedTripPlan = {};
+    }
   }
 
   static selectNewResult = (target, typeOfResult) => {
@@ -72,7 +89,7 @@ class UI {
     }
 
     if (target.classList.contains('plan-trip')) {
-      this.checkIfInputEmpty();
+      this.checkForvalidSelections();
     }
 
     if (target.classList.contains('trip-plan')) {
@@ -83,7 +100,6 @@ class UI {
       Renderer.renderPage();
     }
   }
-
 }
 
 document.body.addEventListener('submit', (event) => {

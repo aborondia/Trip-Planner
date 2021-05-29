@@ -20,11 +20,7 @@ class Renderer {
     return '';
   }
 
-  static buildRouteHtml = (noPlansAvailable) => {
-    if (noPlansAvailable) {
-      return `<h3>I'm sorry, there are no available results right now. Please try again later.</h3>`
-    }
-
+  static buildRouteHtml = () => {
     if (tripPlanner.currentTripPlans.length <= 0) {
       return '';
     }
@@ -106,12 +102,23 @@ ${this.buildDurationHtml(segment)}
     return listHtml;
   }
 
-  static renderEmptyInputMessage = (emptyOriginMessage = '', emptyDestinationMessage = '') => {
-    this.emptyOriginParagraphEl.get().innerHTML = emptyOriginMessage;
-    this.emptyDestinationParagraphEl.get().innerHTML = emptyDestinationMessage;
+  static renderEmptySelectionMessage = (emptyOriginMessage = '', emptyDestinationMessage = '') => {
+    this.emptyOriginParagraphEl.get().innerHTML = `<p class="error">${emptyOriginMessage}</p>`;
+    this.emptyDestinationParagraphEl.get().innerHTML = `<p class="error">${emptyDestinationMessage}</p>`;
   }
 
-  static renderPage = (noPlansAvailable = false) => {
+  static getErrorMessage = (errorType) => {
+    const noPlansHtml = `I'm sorry, there are no available results right now. Please try again later.`;
+    const sameSelectionsHtml = `Please select two different locations.`;
+
+    switch (errorType) {
+      case 'no plans': return noPlansHtml;
+      case 'same selections': return sameSelectionsHtml;
+      default: return '';
+    }
+  }
+
+  static renderPage = (errorType = '') => {
     this.mainContainerEl.get().innerHTML = `
     <div class="origin-container">
       <p id="empty-origin"></p>
@@ -140,7 +147,8 @@ ${this.buildDurationHtml(segment)}
     </div>
     
     <div class="bus-container">
-      ${this.buildRouteHtml(noPlansAvailable)}
+    <h2 class="error">${this.getErrorMessage(errorType)}</h2>
+      ${this.buildRouteHtml()}
     <table id="my-trip">
     ${this.buildTripHtml()}
     </table>

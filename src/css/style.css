@@ -117,6 +117,10 @@ h1{
   text-decoration: underline;
 }
 
+.error{
+  color: rgb(131, 41, 41);
+}
+
 .ignore-click {
   pointer-events: none;
 }

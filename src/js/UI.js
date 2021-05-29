@@ -1,6 +1,7 @@
 class UI {
   static originFormEl = { get: () => document.getElementById('origin-form') };
   static destinationFormEl = { get: () => document.getElementById('destination-form') };
+  static userLocationButtonEl = { get: () => document.getElementById('user-location') };
   static originInputValue = {
     get: () => this.originFormEl.get().firstElementChild.value,
     set: (value) => this.originFormEl.get().firstElementChild.value = value
@@ -12,6 +13,13 @@ class UI {
   static currentOriginEl = '';
   static currentDestinationEl = '';
 
+  static clearSelections() {
+    const allListItems = mapBox.currentOriginResults.concat(mapBox.currentDestinationResults);
+    allListItems.forEach(listItem => {
+      listItem.selected = false;
+    })
+  }
+
   static selectionsSame = () => {
     const originName = this.currentOriginEl.dataset.name;
     const originAddress = this.currentOriginEl.dataset.address
@@ -20,6 +28,7 @@ class UI {
 
     if (originName === destinationName && originAddress === destinationAddress) {
       Renderer.routeErrorMessage.set('Please select two different locations.')
+      tripPlanner.clearTripPlans();
       Renderer.renderPage();
       return true;
     }
@@ -52,7 +61,7 @@ class UI {
       Renderer.destinationErrorMessage.set(destinationEmptyMessage);
       Renderer.originErrorMessage.set('');
       Renderer.renderPage();
-      
+
       return true;
     }
 
@@ -60,8 +69,10 @@ class UI {
   }
 
   static beginTripPlanning = () => {
+    Renderer.renderPage();
     if (!this.bothLocationsSelected() && !this.selectionsSame()) {
-      Renderer.routeErrorMessage.set('');
+      this.clearSelections();
+      Renderer.clearErrors();
       tripPlanner.getTripPlan();
 
       this.currentOriginEl = '';
@@ -71,13 +82,16 @@ class UI {
   }
 
   static selectNewResult = (target, typeOfResult) => {
-    const listElements = document.querySelectorAll(`.${typeOfResult} > LI`);
+    mapBox[`current${typeOfResult}Results`].forEach(result => {
+      if (result.name === target.dataset.name && result.address === target.dataset.address) {
+        result.selected = true;
+        return;
+      }
 
-    listElements.forEach(listItem => {
-      listItem.classList.remove('selected');
+      result.selected = false;
     })
 
-    target.classList.add('selected');
+    Renderer.renderPage();
   }
 
   static handleClickEvent = (target) => {
@@ -87,18 +101,30 @@ class UI {
       if (listSelected.classList.contains('origins')) {
         this.currentOriginEl = target;
 
-        this.selectNewResult(target, 'origins');
+        this.selectNewResult(target, 'Origin');
       }
 
       if (listSelected.classList.contains('destinations')) {
         this.currentDestinationEl = target;
 
-        this.selectNewResult(target, 'destinations');
+        this.selectNewResult(target, 'Destination');
       }
     }
 
-    if (target.classList.contains('plan-trip')) {
+    if (target.id === 'plan-trip') {
       this.beginTripPlanning();
+    }
+
+    if (target.id === 'user-location') {
+      if (Navigator.usingUserLocation) {
+        Navigator.usingUserLocation = false;
+        this.clearSelections();
+        this.currentOriginEl = '';
+        Renderer.renderPage();
+        return;
+      }
+
+      Navigator.getLocation();
     }
 
     if (target.classList.contains('trip-plan')) {
@@ -130,9 +156,12 @@ class UI {
   }
 
   static handleFormSubmitEvent(target) {
+    let formType;
+
     if (target === this.originFormEl.get()) {
       if (!this.inputIsEmpty('origin')) {
         mapBox.getSearchResults('origin');
+        this.currentOriginEl = '';
         Renderer.originErrorMessage.set('')
       }
     }
@@ -140,6 +169,7 @@ class UI {
     if (target === this.destinationFormEl.get()) {
       if (!this.inputIsEmpty('destination')) {
         mapBox.getSearchResults('destination');
+        this.currentDestinationEl = '';
         Renderer.destinationErrorMessage.set('')
       }
     }

@@ -12,12 +12,19 @@ class Renderer {
     get: () => document.getElementById('route-error').textContent,
     set: (message) => document.getElementById('route-error').textContent = message
   }
+  static selectedItem = {};
   static icons = {
     walking: '<i class="fas fa-walking" aria-hidden="true"></i>',
     riding: '<i class="fas fa-bus" aria-hidden="true"></i>',
     waiting: '<i class="fas fa-pause-circle" aria-hidden="true"></i>',
     transfer: '<i class="fas fa-ticket-alt" aria-hidden="true"></i>',
     total: '<i class="fas fa-equals" aria-hidden="true"></i>',
+  }
+
+  static clearErrors = () => {
+    this.routeErrorMessage.set('');
+    this.originErrorMessage.set('');
+    this.destinationErrorMessage.set('');
   }
 
   static buildDurationHtml = (segment) => {
@@ -134,11 +141,9 @@ class Renderer {
     return '';
   }
 
-  static checkIfSelected = (result) => {
-    if (UI.currentOriginEl !== '') {
-      if (UI.currentOriginEl.dataset.name === result.name && UI.currentOriginEl.dataset.address === result.address) {
-        return 'selected';
-      }
+  static isSelected = (result) => {
+    if (result.selected === true) {
+      return 'selected';
     }
 
     return '';
@@ -147,9 +152,17 @@ class Renderer {
   static buildListHtml = (listType) => {
     let listHtml = '';
 
+    if (Navigator.usingUserLocation && listType === 'Origin') {
+      if (document.getElementById('origin-form') !== null) {
+        const userOriginEl = `<p id="users-location" data-name="user-location" data-address="user-coords" data-lon="${Navigator.coords.longitude}" data-lat="${Navigator.coords.latitude}">Using Your Location</p>`;
+        UI.currentOriginEl = document.getElementById('users-location');
+        return userOriginEl;
+      }
+    }
+
     mapBox[`current${listType}Results`].forEach(result => {
       listHtml += `
-      <li class="${this.checkIfSelected(result)}" data-lon=${result.lon} data-lat=${result.lat} data-name="${result.name} data-address=${result.address}">
+      <li class="${this.isSelected(result)}" data-lon=${result.lon} data-lat=${result.lat} data-name="${result.name}" data-address="${result.address}">
         <div class="name ignore-click">${result.name}</div>
         <div class="ignore-click">${result.address}</div>
       </li>`;
@@ -158,12 +171,28 @@ class Renderer {
     return listHtml;
   }
 
+  static hideElement = () => {
+    if (Navigator.usingUserLocation) {
+      return `class="hidden"`;
+    }
+
+    return '';
+  }
+
+  static usingUserLocation = () => {
+    if (Navigator.usingUserLocation) {
+      return `Don't Use My Location`;
+    }
+
+    return 'Use My Location';
+  }
+
   static renderPage = () => {
     this.mainContainerEl.get().innerHTML = `
     <div class="origin-container">
       <p id="origin-error" class="error">${this.getErrorText('origin')}</p>
       <form id="origin-form">
-        <input id="origin-input" placeholder="Find a starting location" type="text" value="${this.getFormInput('origin')}"/>
+        <input id="origin-input" ${this.hideElement()} placeholder="Find a starting location" type="text" value="${this.getFormInput('origin')}"/>
       </form>
     
       <ul class="origins">
@@ -183,7 +212,8 @@ class Renderer {
     </div>
     
     <div class="button-container">
-    <button class="plan-trip">Plan My Trip</button>
+    <button id="plan-trip">Plan My Trip</button>
+    <button id="user-location">${this.usingUserLocation()}</button>
     </div>
     
     <div class="bus-container">
@@ -196,6 +226,7 @@ class Renderer {
       </table>
     </div>`;
   }
+
 }
 
 Renderer.renderPage();

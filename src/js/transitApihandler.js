@@ -6,6 +6,11 @@ class TripPlanner {
     this.selectedTripPlan = {};
   }
 
+  clearTripPlans = () => {
+    this.currentTripPlans = [];
+    this.selectedTripPlan = {};
+  }
+
   getAlternatePlans = (filteredPlans) => {
     const alternatePlans = [];
 

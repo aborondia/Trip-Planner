@@ -54,7 +54,9 @@ input:focus {
   font-weight: bold;
 }
 
-.plan-trip {
+#plan-trip,
+#user-location {
+  margin: 0.5rem 0;
   height: 40px;
   border: 0;
   background: #4146df;
@@ -132,6 +134,22 @@ p.error {
   margin-left: 0.25rem;
 }
 
+.using-user-location {
+  background: hsl(238, 71%, 86%);
+}
+
 .ignore-click {
   pointer-events: none;
+}
+
+.hidden {
+  display: none;
+}
+
+#users-location {
+  color: blue;
+}
+
+#grey-out {
+  color: red;
 }

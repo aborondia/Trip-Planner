@@ -121,6 +121,46 @@ class TripPlanner {
     return durations;
   }
 
+  getAlternatePlans = (filteredPlans) => {
+    const alternatePlans = [];
+
+    filteredPlans.forEach(plan => {
+      if (plan.planNumber !== filteredPlans.recommendedPlan.planNumber) {
+        alternatePlans.push(plan);
+      }
+    })
+
+    return alternatePlans;
+  }
+
+  getRecommendedPlan = (filteredPlans) => {
+    let arrayToFilter = [...filteredPlans];
+
+    filteredPlans.forEach(plan => {
+      arrayToFilter = arrayToFilter.filter(element => element.durations.total <= plan.durations.total);
+    })
+
+    if (arrayToFilter.length > 1) {
+      arrayToFilter.forEach(plan => {
+        arrayToFilter = arrayToFilter.filter(element => element.durations.walking <= plan.durations.walking);
+      })
+    }
+
+    if (arrayToFilter.length > 1) {
+      arrayToFilter.forEach(plan => {
+        arrayToFilter = arrayToFilter.filter(element => element.durations.waiting <= plan.durations.waiting);
+      })
+    }
+
+    if (arrayToFilter.length > 1) {
+      arrayToFilter.forEach(plan => {
+        arrayToFilter = arrayToFilter.filter(element => element.durations.riding <= plan.durations.riding);
+      })
+    }
+
+    return arrayToFilter[0];
+  }
+
   getFilteredTripPlans = (tripPlans) => {
     const filteredPlans = [];
 
@@ -132,6 +172,9 @@ class TripPlanner {
 
       filteredPlans.push(this.getFilteredTripPlan(plan, newPlan))
     })
+
+    filteredPlans.recommendedPlan = this.getRecommendedPlan(filteredPlans);
+    filteredPlans.alternatePlans = this.getAlternatePlans(filteredPlans);
 
     this.currentTripPlans = filteredPlans;
   }

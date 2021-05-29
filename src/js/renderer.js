@@ -24,14 +24,22 @@ class Renderer {
     if (tripPlanner.currentTripPlans.length <= 0) {
       return '';
     }
-
+    const recommendedPlan = tripPlanner.currentTripPlans.recommendedPlan;
+    const alternatePlans = tripPlanner.currentTripPlans.alternatePlans;
     let tripPlansHtml = `
     <div id="available-routes">
-    <h2>Available Routes:</h2>
-    `;
+    <h1>Available Routes</h1>
+    <h2>Recommended:</h2>
+    <h3>Route ${recommendedPlan.planNumber}</h3>
+    <p class="trip-plan" data-plan=${recommendedPlan.planNumber}>
+    ${this.icons.walking}${recommendedPlan.durations.walking}min
+    ${this.icons.riding}${recommendedPlan.durations.riding}min
+    ${this.icons.waiting}${recommendedPlan.durations.waiting}min
+    ${this.icons.total}${recommendedPlan.durations.total}min
+    </p>
+    <h2>Alternate:</h2>`;
 
-    // add recommended plan
-    tripPlanner.currentTripPlans.forEach(plan => {
+    alternatePlans.forEach(plan => {
       tripPlansHtml += `
       <h3>Route ${plan.planNumber}</h3>
       <p class="trip-plan" data-plan=${plan.planNumber}>
@@ -49,9 +57,14 @@ class Renderer {
 
   static buildDurationHtml = (segment) => {
     let durationsHtml = '<td>';
+
+    if (segment.type === 'transfer') {
+      durationsHtml += `${this.icons.transfer}: `;
+    }
+
     for (let [key, value] of Object.entries(segment.durations))
       if (key !== 'total' && value > 0) {
-        durationsHtml += `${this.icons[key]}<span>${value} min</span>`;
+        durationsHtml += `${this.icons[key]}<span> ${value} min</span>`;
       }
 
     durationsHtml += '</td>';

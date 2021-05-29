@@ -95,7 +95,8 @@ input:focus {
 
 #my-trip tbody tr td{
   border-bottom: dotted .5px black;
-  padding: .5rem 0;
+  padding: .5rem 1rem;
+  width: 50rem;
 }
 
 #my-trip td span{
@@ -110,6 +111,10 @@ input:focus {
 
 .trip-plan:hover{
   cursor: pointer;
+}
+
+h1{
+  text-decoration: underline;
 }
 
 .ignore-click {

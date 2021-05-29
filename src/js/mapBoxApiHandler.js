@@ -18,7 +18,7 @@ class MapBox {
         lon: result.center[0],
       }
 
-      if(newResult.address === undefined){
+      if (newResult.address === undefined) {
         newResult.address = 'No Address Available';
       }
 
@@ -32,21 +32,25 @@ class MapBox {
     if (resultsType === 'destination') {
       this.currentDestinationResults = newResults;
     }
-
   }
 
-  getOriginSearchResults = () => {
-    DataFetcher.getData(this.originFetchUrl.get())
-      .then(searchResults => this.getFilteredSearchResults(searchResults, 'origin'))
-      .then(()=> Renderer.renderPage())
-      .catch((error)=> console.log(error))
+  getFetchUrl = (typeOfResults) => {
+    if (typeOfResults === 'origin') {
+      return this.originFetchUrl.get();
+    }
+
+    if (typeOfResults === 'destination') {
+      return this.destinationFetchUrl.get();
+    }
   }
 
-  getDestinationSearchResults = () => {
-    DataFetcher.getData(this.destinationFetchUrl.get())
-      .then(searchResults => this.getFilteredSearchResults(searchResults, 'destination'))
-      .then(()=> Renderer.renderPage())
-      .catch((error)=> console.log(error))
+  getSearchResults = (typeOfResults) => {
+    const urlToFetch = this.getFetchUrl(typeOfResults);
+
+    DataFetcher.getData(urlToFetch)
+      .then(searchResults => this.getFilteredSearchResults(searchResults, typeOfResults))
+      .then(() => Renderer.renderPage())
+      .catch((error) => console.log(error))
   }
 }
 

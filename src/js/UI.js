@@ -9,11 +9,11 @@ class UI {
   static handleFormSubmitEvent(target) {
     // don't clear other form input on submit
     if (target === this.originFormEl.get()) {
-      mapBox.getOriginSearchResults();
+      mapBox.getSearchResults('origin');
     }
 
     if (target === this.destinationFormEl.get()) {
-      mapBox.getDestinationSearchResults();
+      mapBox.getSearchResults('destination');
     }
   }
 

@@ -29,6 +29,8 @@ class Renderer {
     let tripPlansHtml = `
     <div id="available-routes">
     <h1>Available Routes</h1>
+    <h2>Origin: {UI.currentOriginEl.dataset.address}</h2>
+    <h2>Destination: {UI.currentDestinationEl.dataset.address}</h2>
     <h2>Recommended:</h2>
     <h3>Route ${recommendedPlan.planNumber}</h3>
     <p class="trip-plan" data-plan=${recommendedPlan.planNumber}>

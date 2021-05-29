@@ -6,14 +6,35 @@ class UI {
   static currentOriginEl = '';
   static currentDestinationEl = '';
 
+  static inputEmpty = (inputType) => {
+    const originInputValue = this.originInputValue.get();
+    const destinationInputValue = this.destinationInputValue.get();
+
+    if (inputType === 'origin' && originInputValue === '') {
+      Renderer.renderInputErrorMessage('Please enter an origin', '');
+      return true;
+    }
+
+    if (inputType === 'destination' && destinationInputValue === '') {
+      Renderer.renderInputErrorMessage('', 'Please enter a destination');
+      return true;
+    }
+
+    return false;
+  }
+
   static handleFormSubmitEvent(target) {
     // don't clear other form input on submit
     if (target === this.originFormEl.get()) {
-      mapBox.getSearchResults('origin');
+      if (!this.inputEmpty('origin')) {
+        mapBox.getSearchResults('origin');
+      }
     }
 
     if (target === this.destinationFormEl.get()) {
-      mapBox.getSearchResults('destination');
+      if (!this.inputEmpty('destination')) {
+        mapBox.getSearchResults('destination');
+      }
     }
   }
 
@@ -23,17 +44,17 @@ class UI {
 
 
     if (this.currentOriginEl === '' && this.currentDestinationEl === '') {
-      Renderer.renderEmptySelectionMessage(originEmptyMessage, destinationEmptyMessage);
+      Renderer.renderInputErrorMessage(originEmptyMessage, destinationEmptyMessage);
       return false;
     }
 
     if (this.currentOriginEl === '') {
-      Renderer.renderEmptySelectionMessage(originEmptyMessage, '');
+      Renderer.renderInputErrorMessage(originEmptyMessage, '');
       return false;
     }
 
     if (this.currentDestinationEl === '') {
-      Renderer.renderEmptySelectionMessage('', destinationEmptyMessage);
+      Renderer.renderInputErrorMessage('', destinationEmptyMessage);
       return false;
     }
 

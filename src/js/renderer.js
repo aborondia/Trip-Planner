@@ -1,7 +1,7 @@
 class Renderer {
   static mainContainerEl = { get: () => document.querySelector('main') }
-  static emptyOriginParagraphEl = { get: () => document.getElementById('empty-origin') };
-  static emptyDestinationParagraphEl = { get: () => document.getElementById('empty-destination') };
+  static originErrorParagraphEl = { get: () => document.getElementById('empty-origin') };
+  static destinationErrorParagraphEl = { get: () => document.getElementById('empty-destination') };
   static icons = {
     walking: '<i class="fas fa-walking" aria-hidden="true"></i>',
     riding: '<i class="fas fa-bus" aria-hidden="true"></i>',
@@ -104,9 +104,9 @@ ${this.buildDurationHtml(segment)}
     return listHtml;
   }
 
-  static renderEmptySelectionMessage = (emptyOriginMessage = '', emptyDestinationMessage = '') => {
-    this.emptyOriginParagraphEl.get().innerHTML = `<p class="error">${emptyOriginMessage}</p>`;
-    this.emptyDestinationParagraphEl.get().innerHTML = `<p class="error">${emptyDestinationMessage}</p>`;
+  static renderInputErrorMessage = (originErrorMessage = '', destinationErrorMessage = '') => {
+    this.originErrorParagraphEl.get().innerHTML = `<p class="error">${originErrorMessage}</p>`;
+    this.destinationErrorParagraphEl.get().innerHTML = `<p class="error">${destinationErrorMessage}</p>`;
   }
 
   static getErrorMessage = (errorType) => {

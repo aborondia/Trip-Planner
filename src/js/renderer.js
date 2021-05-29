@@ -20,7 +20,11 @@ class Renderer {
     return '';
   }
 
-  static buildRouteHtml = () => {
+  static buildRouteHtml = (noPlansAvailable) => {
+    if (noPlansAvailable) {
+      return `<h3>I'm sorry, there are no available results right now. Please try again later.</h3>`
+    }
+
     if (tripPlanner.currentTripPlans.length <= 0) {
       return '';
     }
@@ -54,7 +58,6 @@ class Renderer {
 
     return tripPlansHtml;
   }
-
   static buildDurationHtml = (segment) => {
     let durationsHtml = '<td>';
 
@@ -108,7 +111,7 @@ ${this.buildDurationHtml(segment)}
     this.emptyDestinationParagraphEl.get().innerHTML = emptyDestinationMessage;
   }
 
-  static renderPage = () => {
+  static renderPage = (noPlansAvailable = false) => {
     this.mainContainerEl.get().innerHTML = `
     <div class="origin-container">
       <p id="empty-origin"></p>
@@ -137,7 +140,7 @@ ${this.buildDurationHtml(segment)}
     </div>
     
     <div class="bus-container">
-      ${this.buildRouteHtml()}
+      ${this.buildRouteHtml(noPlansAvailable)}
     <table id="my-trip">
     ${this.buildTripHtml()}
     </table>

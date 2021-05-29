@@ -8,6 +8,13 @@ class DataFetcher {
 
     const data = await response.json();
 
+    if (data.plans !== undefined && data.plans.length === 0) {
+      const noPlansAvailable = true;
+
+      Renderer.renderPage(noPlansAvailable);
+      throw new Error('No plans available');
+    }
+
     return data;
   }
 }

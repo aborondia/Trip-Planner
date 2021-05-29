@@ -19,7 +19,7 @@ class MapBox {
       }
 
       if (newResult.address === undefined) {
-        newResult.address = 'No Address Available';
+        return;
       }
 
       newResults.push(newResult);
@@ -44,12 +44,28 @@ class MapBox {
     }
   }
 
+  checkForEmptyResults = (typeOfResults) => {
+    if (typeOfResults === 'origin') {
+      if (this.currentOriginResults.length === 0) {
+        Renderer.originErrorMessage.set('No results found');
+      }
+    }
+
+    if (typeOfResults === 'destination') {
+      if (this.currentDestinationResults.length === 0) {
+        Renderer.destinationErrorMessage.set('No results found');
+      }
+    }
+  }
+
   getSearchResults = (typeOfResults) => {
     const urlToFetch = this.getFetchUrl(typeOfResults);
 
     DataFetcher.getData(urlToFetch)
       .then(searchResults => this.getFilteredSearchResults(searchResults, typeOfResults))
+      .then(() => this.checkForEmptyResults(typeOfResults))
       .then(() => Renderer.renderPage())
+      .then(() => UI[`${typeOfResults}InputValue`].set(''))
       .catch((error) => console.log(error))
   }
 }

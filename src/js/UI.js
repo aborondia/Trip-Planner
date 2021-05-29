@@ -3,46 +3,26 @@ class UI {
   static destinationFormEl = { get: () => document.getElementById('destination-form') };
   static originInputValue = {
     get: () => this.originFormEl.get().firstElementChild.value,
-    set: () => this.originFormEl.get().firstElementChild.value = ''
+    set: (value) => this.originFormEl.get().firstElementChild.value = value
   };
   static destinationInputValue = {
     get: () => this.destinationFormEl.get().firstElementChild.value,
-    set: () => this.destinationFormEl.get().firstElementChild.value = ''
+    set: (value) => this.destinationFormEl.get().firstElementChild.value = value
   };
   static currentOriginEl = '';
   static currentDestinationEl = '';
 
-  static inputEmpty = (inputType) => {
-    const originInputValue = this.originInputValue.get();
-    const destinationInputValue = this.destinationInputValue.get();
+  static checkIfSelectionsSame = () => {
+    const originName = this.currentOriginEl.dataset.name;
+    const destinationName = this.currentDestinationEl.dataset.name;
 
-    if (inputType === 'origin' && originInputValue === '') {
-      Renderer.renderInputErrorMessage('Please enter an origin', '');
-      return true;
+    if (originName === destinationName) {
+      Renderer.routeErrorMessage.set('Please select two different locations.')
+      Renderer.renderPage();
+      return false;
     }
 
-    if (inputType === 'destination' && destinationInputValue === '') {
-      Renderer.renderInputErrorMessage('', 'Please enter a destination');
-      return true;
-    }
-
-    return false;
-  }
-
-  static handleFormSubmitEvent(target) {
-    if (target === this.originFormEl.get()) {
-      if (!this.inputEmpty('origin')) {
-        mapBox.getSearchResults('origin');
-        this.originInputValue.set();
-      }
-    }
-
-    if (target === this.destinationFormEl.get()) {
-      if (!this.inputEmpty('destination')) {
-        mapBox.getSearchResults('destination');
-        this.destinationInputValue.set();
-      }
-    }
+    return true;
   }
 
   static checkIfBothLocationsSelected = () => {
@@ -51,36 +31,35 @@ class UI {
 
 
     if (this.currentOriginEl === '' && this.currentDestinationEl === '') {
-      Renderer.renderInputErrorMessage(originEmptyMessage, destinationEmptyMessage);
+      Renderer.originErrorMessage.set(originEmptyMessage);
+      Renderer.destinationErrorMessage.set(destinationEmptyMessage);
+      Renderer.renderPage();
+
       return false;
     }
 
     if (this.currentOriginEl === '') {
-      Renderer.renderInputErrorMessage(originEmptyMessage, '');
+      Renderer.originErrorMessage.set(originEmptyMessage);
+      Renderer.destinationErrorMessage.set('');
+      Renderer.renderPage();
+
       return false;
     }
 
     if (this.currentDestinationEl === '') {
-      Renderer.renderInputErrorMessage('', destinationEmptyMessage);
+      Renderer.destinationErrorMessage.set(destinationEmptyMessage);
+      Renderer.originErrorMessage.set('');
+      Renderer.renderPage();
+      
       return false;
     }
 
     return true;
   }
 
-  static checkIfSelectionsSame = () => {
-    const originAddress = this.currentOriginEl.dataset.address;
-    const destinationAddress = this.currentDestinationEl.dataset.address;
-    if (originAddress === destinationAddress) {
-      Renderer.renderPage('same selections');
-      return false;
-    }
-
-    return true;
-  }
-
-  static checkForvalidSelections = () => {
+  static beginTripPlanning = () => {
     if (this.checkIfBothLocationsSelected() && this.checkIfSelectionsSame()) {
+      Renderer.routeErrorMessage.set('');
       tripPlanner.getTripPlan();
 
       this.currentOriginEl = '';
@@ -117,7 +96,7 @@ class UI {
     }
 
     if (target.classList.contains('plan-trip')) {
-      this.checkForvalidSelections();
+      this.beginTripPlanning();
     }
 
     if (target.classList.contains('trip-plan')) {
@@ -126,6 +105,41 @@ class UI {
       tripPlanner.selectedTripPlan = tripPlanner.currentTripPlans.find(plan => plan.planNumber.toString() === selectedPlanNumber);
       tripPlanner.currentTripPlans = [];
       Renderer.renderPage();
+    }
+  }
+
+  static inputEmpty = (inputType) => {
+    const originInputValue = this.originInputValue.get();
+    const destinationInputValue = this.destinationInputValue.get();
+
+    if (inputType === 'origin' && originInputValue === '') {
+      Renderer.originErrorMessage.set('Please enter an origin');
+      Renderer.renderPage();
+      return true;
+    }
+
+    if (inputType === 'destination' && destinationInputValue === '') {
+      Renderer.destinationErrorMessage.set('Please enter a destination');
+      Renderer.renderPage();
+      return true;
+    }
+
+    return false;
+  }
+
+  static handleFormSubmitEvent(target) {
+    if (target === this.originFormEl.get()) {
+      if (!this.inputEmpty('origin')) {
+        mapBox.getSearchResults('origin');
+        Renderer.originErrorMessage.set('')
+      }
+    }
+
+    if (target === this.destinationFormEl.get()) {
+      if (!this.inputEmpty('destination')) {
+        mapBox.getSearchResults('destination');
+        Renderer.destinationErrorMessage.set('')
+      }
     }
   }
 }

@@ -64,18 +64,21 @@ input:focus {
   width: 100%;
 }
 
-#my-trip, #available-routes {
+#my-trip,
+#available-routes {
   width: 75%;
   margin: auto;
 }
 
-#my-trip li, #available-routes li {
+#my-trip li,
+#available-routes li {
   margin: 10px 0px;
   font-size: 17px;
   display: flex;
 }
 
-#available-routes i, #available-routes p {
+#available-routes i,
+#available-routes p {
   margin-right: 15px;
   font-size: 25px;
   align-self: center;
@@ -88,37 +91,45 @@ input:focus {
   font-weight: bold;
 }
 
-#my-trip td{
+#my-trip td {
   width: 1rem;
   font-style: italic;
 }
 
-#my-trip tbody tr td{
-  border-bottom: dotted .5px black;
-  padding: .5rem 1rem;
+#my-trip tbody tr td {
+  border-bottom: dotted 0.5px black;
+  padding: 0.5rem 1rem;
   width: 50rem;
 }
 
-#my-trip td span{
+#my-trip td span {
   font-weight: bold;
-  margin-right: .5rem;
+  margin-right: 0.5rem;
 }
 
-#available-routes p{
+#available-routes p {
   padding: 2rem;
   background-color: #f2f3ff;
 }
 
-.trip-plan:hover{
+.trip-plan:hover {
   cursor: pointer;
 }
 
-h1{
+h1 {
   text-decoration: underline;
 }
 
-.error{
+.error {
   color: rgb(131, 41, 41);
+}
+
+h2.error {
+  text-align: center;
+}
+
+p.error {
+  margin-left: 0.25rem;
 }
 
 .ignore-click {

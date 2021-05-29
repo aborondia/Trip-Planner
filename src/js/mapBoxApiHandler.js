@@ -2,9 +2,25 @@ class MapBox {
   constructor() {
     this.currentOriginResults = [];
     this.currentDestinationResults = [];
-    this.bboxWinnipeg = { minLon: -97.325875, minLat: 49.766204, maxLon: -96.953987, maxLat: 49.99275 };
-    this.originFetchUrl = { get: () => `https://api.mapbox.com/geocoding/v5/mapbox.places/${UI.originInputValue.get()}.json?bbox=-97.325875,%2049.766204,%20-96.953987,%2049.99275&access_token=pk.eyJ1IjoiYWJvcm9uZGlhIiwiYSI6ImNrcDRxNDc1ODA0YTEybm5xcGl0bXU5N3AifQ.HKd0aKNsdN7FAtDTanMDWg&limit=10` };
-    this.destinationFetchUrl = { get: () => `https://api.mapbox.com/geocoding/v5/mapbox.places/${UI.destinationInputValue.get()}.json?bbox=-97.325875,%2049.766204,%20-96.953987,%2049.99275&access_token=pk.eyJ1IjoiYWJvcm9uZGlhIiwiYSI6ImNrcDRxNDc1ODA0YTEybm5xcGl0bXU5N3AifQ.HKd0aKNsdN7FAtDTanMDWg&limit=10` };
+    this.accessToken = 'pk.eyJ1IjoiYWJvcm9uZGlhIiwiYSI6ImNrcDRxNDc1ODA0YTEybm5xcGl0bXU5N3AifQ.HKd0aKNsdN7FAtDTanMDWg';
+    this.bboxWinnipeg = '-97.325875,49.766204,-96.953987,49.99275';
+    this.originFetchUrl = { get: () => `https://api.mapbox.com/geocoding/v5/mapbox.places/${UI.originInputValue.get()}.json?bbox=${this.bboxWinnipeg}&access_token=pk.eyJ1IjoiYWJvcm9uZGlhIiwiYSI6ImNrcDRxNDc1ODA0YTEybm5xcGl0bXU5N3AifQ.HKd0aKNsdN7FAtDTanMDWg&limit=10` };
+    this.destinationFetchUrl = { get: () => `https://api.mapbox.com/geocoding/v5/mapbox.places/${UI.destinationInputValue.get()}.json?bbox=${this.bboxWinnipeg}&access_token=${this.accessToken}&limit=10` };
+  }
+  checkForEmptyResults = (typeOfResults) => {
+    const emptyResultsMessage = 'No results found';
+
+    if (typeOfResults === 'origin') {
+      if (this.currentOriginResults.length === 0) {
+        Renderer.originErrorMessage.set(emptyResultsMessage);
+      }
+    }
+
+    if (typeOfResults === 'destination') {
+      if (this.currentDestinationResults.length === 0) {
+        Renderer.destinationErrorMessage.set(emptyResultsMessage);
+      }
+    }
   }
 
   getFilteredSearchResults = (searchResults, resultsType) => {
@@ -44,28 +60,16 @@ class MapBox {
     }
   }
 
-  checkForEmptyResults = (typeOfResults) => {
-    if (typeOfResults === 'origin') {
-      if (this.currentOriginResults.length === 0) {
-        Renderer.originErrorMessage.set('No results found');
-      }
-    }
-
-    if (typeOfResults === 'destination') {
-      if (this.currentDestinationResults.length === 0) {
-        Renderer.destinationErrorMessage.set('No results found');
-      }
-    }
-  }
-
   getSearchResults = (typeOfResults) => {
     const urlToFetch = this.getFetchUrl(typeOfResults);
 
     DataFetcher.getData(urlToFetch)
-      .then(searchResults => this.getFilteredSearchResults(searchResults, typeOfResults))
-      .then(() => this.checkForEmptyResults(typeOfResults))
-      .then(() => Renderer.renderPage())
-      .then(() => UI[`${typeOfResults}InputValue`].set(''))
+      .then(searchResults => {
+        this.getFilteredSearchResults(searchResults, typeOfResults)
+        this.checkForEmptyResults(typeOfResults);
+        Renderer.renderPage();
+        UI[`${typeOfResults}InputValue`].set('');
+      })
       .catch((error) => console.log(error))
   }
 }

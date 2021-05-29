@@ -1,30 +1,77 @@
 class TripPlanner {
   constructor() {
     this.apiKey = 'd7PLUCql1DUVNbas9tgX';
-    this.fetchUrl = { get: () => `https://api.winnipegtransit.com/v3/trip-planner.json?api-key=d7PLUCql1DUVNbas9tgX&origin=geo/${UI.currentOriginEl.dataset.lat},${UI.currentOriginEl.dataset.lon}&destination=geo/${UI.currentDestinationEl.dataset.lat},${UI.currentDestinationEl.dataset.lon}` }
+    this.fetchUrl = { get: () => `https://api.winnipegtransit.com/v3/trip-planner.json?api-key=${this.apiKey}&origin=geo/${UI.currentOriginEl.dataset.lat},${UI.currentOriginEl.dataset.lon}&destination=geo/${UI.currentDestinationEl.dataset.lat},${UI.currentDestinationEl.dataset.lon}` }
     this.currentTripPlans = [];
     this.selectedTripPlan = {};
   }
 
-  getSegmentTimes = (segment) => {
-    const times = {};
+  getAlternatePlans = (filteredPlans) => {
+    const alternatePlans = [];
 
-    for (let [key, value] of Object.entries(segment.times.durations)) {
-      if (value !== 0) {
-        times[key] = value;
+    filteredPlans.forEach(plan => {
+      if (plan.planNumber !== filteredPlans.recommendedPlan.planNumber) {
+        alternatePlans.push(plan);
       }
-    }
+    })
 
-    return times;
+    return alternatePlans;
   }
 
-  getSegmentType = (segment) => {
-    switch (segment.type) {
-      case 'walk': return segment.times.durations.walking;
-      case 'ride': return segment.times.durations.riding;
-      case 'transfer': return segment.times.durations.waiting;
+  getRecommendedPlan = (filteredPlans) => {
+    let arrayToFilter = [...filteredPlans];
+
+    filteredPlans.forEach(plan => {
+      arrayToFilter = arrayToFilter.filter(planToFilter => planToFilter.durations.total <= plan.durations.total);
+    })
+
+    if (arrayToFilter.length > 1) {
+      arrayToFilter.forEach(plan => {
+        arrayToFilter = arrayToFilter.filter(planToFilter => planToFilter.durations.walking <= plan.durations.walking);
+      })
     }
+
+    if (arrayToFilter.length > 1) {
+      arrayToFilter.forEach(plan => {
+        arrayToFilter = arrayToFilter.filter(planToFilter => planToFilter.durations.waiting <= plan.durations.waiting);
+      })
+    }
+
+    if (arrayToFilter.length > 1) {
+      arrayToFilter.forEach(plan => {
+        arrayToFilter = arrayToFilter.filter(planToFilter => planToFilter.durations.riding <= plan.durations.riding);
+      })
+    }
+
+    return arrayToFilter[0];
   }
+
+  getTransferInstructions = (segment, filteredSegment) => {
+    const durations = segment.times.durations;
+    const type = segment.type;
+    const stopNumber = segment.from.stop.key;
+    const stopName = segment.from.stop.name;
+    const destinationNumber = segment.to.stop.key;
+    const destinationName = segment.to.stop.name;
+    let instructions = `Transfer from stop #${stopNumber} - ${stopName} to stop #${destinationNumber} - ${destinationName}.`;
+
+    filteredSegment.type = type;
+    filteredSegment.instructions = instructions;
+    filteredSegment.durations = durations;
+  }
+
+  getRideInstructions = (segment, filteredSegment) => {
+    const durations = segment.times.durations;
+    const type = segment.type;
+    const busNumber = segment.bus.key;
+    const routeName = segment.route.name;
+    const instructions = `Ride the #${busNumber} - ${routeName}.`;
+
+    filteredSegment.type = type;
+    filteredSegment.instructions = instructions;
+    filteredSegment.durations = durations;
+  }
+
   getWalkInstructions = (segment, filteredSegment) => {
     const durations = segment.times.durations;
     const type = segment.type;
@@ -49,32 +96,6 @@ class TripPlanner {
     filteredSegment.durations = durations;
   }
 
-  getRideInstructions = (segment, filteredSegment) => {
-    const durations = segment.times.durations;
-    const type = segment.type;
-    const busNumber = segment.bus.key;
-    const routeName = segment.route.name;
-    const instructions = `Ride the #${busNumber} - ${routeName}.`;
-
-    filteredSegment.type = type;
-    filteredSegment.instructions = instructions;
-    filteredSegment.durations = durations;
-  }
-
-  getTransferInstructions = (segment, filteredSegment) => {
-    const durations = segment.times.durations;
-    const type = segment.type;
-    const stopNumber = segment.from.stop.key;
-    const stopName = segment.from.stop.name;
-    const destinationNumber = segment.to.stop.key;
-    const destinationName = segment.to.stop.name;
-    let instructions = `Transfer from stop #${stopNumber} - ${stopName} to stop #${destinationNumber} - ${destinationName}.`;
-
-    filteredSegment.type = type;
-    filteredSegment.instructions = instructions;
-    filteredSegment.durations = durations;
-  }
-
   getFilteredTripPlan = (plan, newPlan) => {
     const planSegments = [];
 
@@ -96,11 +117,11 @@ class TripPlanner {
         this.getTransferInstructions(segment, filteredSegment);
       }
 
-
       planSegments.push(filteredSegment);
     })
 
     newPlan.planSegments = planSegments;
+
     return newPlan;
   }
 
@@ -119,46 +140,6 @@ class TripPlanner {
     }
 
     return durations;
-  }
-
-  getAlternatePlans = (filteredPlans) => {
-    const alternatePlans = [];
-
-    filteredPlans.forEach(plan => {
-      if (plan.planNumber !== filteredPlans.recommendedPlan.planNumber) {
-        alternatePlans.push(plan);
-      }
-    })
-
-    return alternatePlans;
-  }
-
-  getRecommendedPlan = (filteredPlans) => {
-    let arrayToFilter = [...filteredPlans];
-
-    filteredPlans.forEach(plan => {
-      arrayToFilter = arrayToFilter.filter(element => element.durations.total <= plan.durations.total);
-    })
-
-    if (arrayToFilter.length > 1) {
-      arrayToFilter.forEach(plan => {
-        arrayToFilter = arrayToFilter.filter(element => element.durations.walking <= plan.durations.walking);
-      })
-    }
-
-    if (arrayToFilter.length > 1) {
-      arrayToFilter.forEach(plan => {
-        arrayToFilter = arrayToFilter.filter(element => element.durations.waiting <= plan.durations.waiting);
-      })
-    }
-
-    if (arrayToFilter.length > 1) {
-      arrayToFilter.forEach(plan => {
-        arrayToFilter = arrayToFilter.filter(element => element.durations.riding <= plan.durations.riding);
-      })
-    }
-
-    return arrayToFilter[0];
   }
 
   getFilteredTripPlans = (tripPlans) => {
@@ -181,9 +162,10 @@ class TripPlanner {
 
   getTripPlan = () => {
     DataFetcher.getData(tripPlanner.fetchUrl.get())
-      .then(tripPlans => this.getFilteredTripPlans(tripPlans.plans))
-      .then(() => Renderer.renderPage())
-      .then(() => console.log(this.currentTripPlans))
+      .then(tripPlans => {
+        this.getFilteredTripPlans(tripPlans.plans);
+        Renderer.renderPage();
+      })
       .catch((error) => console.log(error))
   }
 }

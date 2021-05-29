@@ -29,27 +29,27 @@ class Renderer {
 
     for (let [key, value] of Object.entries(segment.durations))
       if (key !== 'total' && value > 0) {
-        durationsHtml += `${this.icons[key]}<span> ${value} min</span>`;
+        durationsHtml += `${this.icons[key]} <span>${value} min</span>`;
       }
 
     durationsHtml += '</td>';
+
     return durationsHtml;
   }
 
   static buildTripHtml = () => {
+    let tripHtml = '';
+
     if (tripPlanner.selectedTripPlan.planSegments === undefined) {
       return '';
     }
 
-    let tripHtml = '';
-
     tripPlanner.selectedTripPlan.planSegments.forEach(segment => {
       tripHtml += `
-<tr>
-${this.buildDurationHtml(segment)}
-<td>${segment.instructions}</td>
-</tr>
-`;
+      <tr>
+        ${this.buildDurationHtml(segment)}
+        <td>${segment.instructions}</td>
+      </tr>`;
     })
 
     return tripHtml;
@@ -60,22 +60,22 @@ ${this.buildDurationHtml(segment)}
     const recommendedPlan = tripPlanner.currentTripPlans.recommendedPlan;
     let tripPlansHtml = `
     <div id="available-routes">
-      <h1>Available Routes</h1>
-      <h2>Recommended:</h2>`;
+      <h1>Available Routes</h1>`;
 
     if (tripPlanner.currentTripPlans.length <= 0) {
       return '';
     }
 
     tripPlansHtml += `
+    <h2>Recommended:</h2>
     <h3>Route ${recommendedPlan.planNumber}</h3>
     <div class="trip-plan" data-plan=${recommendedPlan.planNumber}>
-    <p class="ignore-click">
-    ${this.icons.walking}${recommendedPlan.durations.walking}min
-    ${this.icons.riding}${recommendedPlan.durations.riding}min
-    ${this.icons.waiting}${recommendedPlan.durations.waiting}min
-    ${this.icons.total}${recommendedPlan.durations.total}min
-    </p>
+      <p class="ignore-click">
+        ${this.icons.walking}${recommendedPlan.durations.walking}min
+        ${this.icons.riding}${recommendedPlan.durations.riding}min
+        ${this.icons.waiting}${recommendedPlan.durations.waiting}min
+        ${this.icons.total}${recommendedPlan.durations.total}min
+      </p>
     </div>
     <h2>Alternate:</h2>`;
 
@@ -83,11 +83,11 @@ ${this.buildDurationHtml(segment)}
       tripPlansHtml += `
       <h3>Route ${plan.planNumber}</h3>
       <div class="trip-plan" data-plan=${plan.planNumber}>
-      <p class="ignore-click">
-        ${this.icons.walking}${plan.durations.walking}min
-        ${this.icons.riding}${plan.durations.riding}min
-        ${this.icons.waiting}${plan.durations.waiting}min
-        ${this.icons.total}${plan.durations.total}min
+        <p class="ignore-click">
+          ${this.icons.walking}${plan.durations.walking}min
+          ${this.icons.riding}${plan.durations.riding}min
+          ${this.icons.waiting}${plan.durations.waiting}min
+          ${this.icons.total}${plan.durations.total}min
         </p>
       </div>`;
     })
@@ -118,7 +118,7 @@ ${this.buildDurationHtml(segment)}
     return '';
   }
 
-  static getInputValue = (valueToGet) => {
+  static getFormInput = (valueToGet) => {
     if (valueToGet === 'origin') {
       if (document.getElementById('origin-form') !== null) {
         return UI.originInputValue.get();
@@ -163,7 +163,7 @@ ${this.buildDurationHtml(segment)}
     <div class="origin-container">
       <p id="origin-error" class="error">${this.getErrorText('origin')}</p>
       <form id="origin-form">
-        <input id="origin-input" placeholder="Find a starting location" type="text" value="${this.getInputValue('origin')}"/>
+        <input id="origin-input" placeholder="Find a starting location" type="text" value="${this.getFormInput('origin')}"/>
       </form>
     
       <ul class="origins">
@@ -174,7 +174,7 @@ ${this.buildDurationHtml(segment)}
     <div class="destination-container">
       <p id="destination-error" class="error">${this.getErrorText('destination')}</p>
       <form id="destination-form">
-        <input id="destination-input" placeholder="Choose your Destination" type="text" value="${this.getInputValue('destination')}"/>
+        <input id="destination-input" placeholder="Choose your Destination" type="text" value="${this.getFormInput('destination')}"/>
       </form>
     
       <ul class="destinations">

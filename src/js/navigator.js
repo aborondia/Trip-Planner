@@ -5,7 +5,7 @@ class Navigator {
 
   getLocation = () => {
     return new Promise((resolve) => {
-      navigator.geolocation.getCurrentPosition(resolve)
+      navigator.geolocation.getCurrentPosition(resolve);
     })
   }
 }

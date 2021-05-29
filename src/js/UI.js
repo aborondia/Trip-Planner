@@ -13,8 +13,16 @@ class UI {
   static currentOriginEl = '';
   static currentDestinationEl = '';
 
+  static turnOffUserLocation = () => {
+    Navigator.usingUserLocation = false;
+    this.clearSelections();
+    this.currentOriginEl = '';
+    Renderer.renderPage();
+  }
+
   static clearSelections() {
     const allListItems = mapBox.currentOriginResults.concat(mapBox.currentDestinationResults);
+
     allListItems.forEach(listItem => {
       listItem.selected = false;
     })
@@ -117,10 +125,7 @@ class UI {
 
     if (target.id === 'user-location') {
       if (Navigator.usingUserLocation) {
-        Navigator.usingUserLocation = false;
-        this.clearSelections();
-        this.currentOriginEl = '';
-        Renderer.renderPage();
+        this.turnOffUserLocation();
         return;
       }
 
@@ -137,17 +142,10 @@ class UI {
   }
 
   static inputIsEmpty = (inputType) => {
-    const originInputValue = this.originInputValue.get();
-    const destinationInputValue = this.destinationInputValue.get();
+    const inputValue = this[`${inputType}InputValue`].get();
 
-    if (inputType === 'origin' && originInputValue === '') {
-      Renderer.originErrorMessage.set('Please enter an origin');
-      Renderer.renderPage();
-      return true;
-    }
-
-    if (inputType === 'destination' && destinationInputValue === '') {
-      Renderer.destinationErrorMessage.set('Please enter a destination');
+    if (inputValue === '') {
+      Renderer[`${inputType}ErrorMessage`].set(`Please enter ${inputType}`);
       Renderer.renderPage();
       return true;
     }
@@ -157,21 +155,22 @@ class UI {
 
   static handleFormSubmitEvent(target) {
     let formType;
+    let formEl;
 
     if (target === this.originFormEl.get()) {
-      if (!this.inputIsEmpty('origin')) {
-        mapBox.getSearchResults('origin');
-        this.currentOriginEl = '';
-        Renderer.originErrorMessage.set('')
-      }
+      formType = 'origin';
+      formEl = this.currentOriginEl;
     }
 
     if (target === this.destinationFormEl.get()) {
-      if (!this.inputIsEmpty('destination')) {
-        mapBox.getSearchResults('destination');
-        this.currentDestinationEl = '';
-        Renderer.destinationErrorMessage.set('')
-      }
+      formType = 'destination';
+      formEl = this.currentDestinationEl;
+    }
+
+    if (!this.inputIsEmpty(formType)) {
+      mapBox.getSearchResults(formType);
+      formEl = '';
+      Renderer.originErrorMessage.set('')
     }
   }
 }

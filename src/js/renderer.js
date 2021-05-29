@@ -12,7 +12,6 @@ class Renderer {
     get: () => document.getElementById('route-error').textContent,
     set: (message) => document.getElementById('route-error').textContent = message
   }
-  static selectedItem = {};
   static icons = {
     walking: '<i class="fas fa-walking" aria-hidden="true"></i>',
     riding: '<i class="fas fa-bus" aria-hidden="true"></i>',
@@ -44,7 +43,7 @@ class Renderer {
     return durationsHtml;
   }
 
-  static buildTripHtml = () => {
+  static buildSelectedTripHtml = () => {
     let tripHtml = '';
 
     if (tripPlanner.selectedTripPlan.planSegments === undefined) {
@@ -62,16 +61,16 @@ class Renderer {
     return tripHtml;
   }
 
-  static buildRouteHtml = () => {
+  static buildTripPlansHtml = () => {
+    if (tripPlanner.currentTripPlans.length <= 0) {
+      return '';
+    }
+
     const alternatePlans = tripPlanner.currentTripPlans.alternatePlans;
     const recommendedPlan = tripPlanner.currentTripPlans.recommendedPlan;
     let tripPlansHtml = `
     <div id="available-routes">
       <h1>Available Routes</h1>`;
-
-    if (tripPlanner.currentTripPlans.length <= 0) {
-      return '';
-    }
 
     tripPlansHtml += `
     <h2>Recommended:</h2>
@@ -103,39 +102,18 @@ class Renderer {
 
     return tripPlansHtml;
   }
-  static getErrorText = (typeOfInput) => {
-    if (typeOfInput === 'origin') {
-      if (document.getElementById('origin-error') !== null) {
-        return this.originErrorMessage.get();
-      }
+
+  static usingUserLocation = () => {
+    if (Navigator.usingUserLocation) {
+      return `Don't Use My Location`;
     }
 
-    if (typeOfInput === 'destination') {
-      if (document.getElementById('destination-error') !== null) {
-        return this.destinationErrorMessage.get();
-      }
-    }
-
-    if (typeOfInput === 'same-selection') {
-      if (document.getElementById('route-error') !== null) {
-        return this.routeErrorMessage.get();
-      }
-    }
-
-    return '';
+    return 'Use My Location';
   }
 
   static getFormInput = (valueToGet) => {
-    if (valueToGet === 'origin') {
-      if (document.getElementById('origin-form') !== null) {
-        return UI.originInputValue.get();
-      }
-    }
-
-    if (valueToGet === 'destination') {
-      if (document.getElementById('destination-form') !== null) {
-        return UI.destinationInputValue.get();
-      }
+    if (document.getElementById(`${valueToGet}-form`) !== null) {
+      return UI[`${valueToGet}InputValue`].get();
     }
 
     return '';
@@ -149,12 +127,16 @@ class Renderer {
     return '';
   }
 
+  static buildUserLocationOriginListItem = () => {
+    return `<p id="users-location" data-name="user-location" data-address="user-coords" data-lon="${Navigator.coords.longitude}" data-lat="${Navigator.coords.latitude}">Using Your Location</p>`;
+  }
+
   static buildListHtml = (listType) => {
     let listHtml = '';
 
     if (Navigator.usingUserLocation && listType === 'Origin') {
       if (document.getElementById('origin-form') !== null) {
-        const userOriginEl = `<p id="users-location" data-name="user-location" data-address="user-coords" data-lon="${Navigator.coords.longitude}" data-lat="${Navigator.coords.latitude}">Using Your Location</p>`;
+        const userOriginEl = this.buildUserLocationOriginListItem();
         UI.currentOriginEl = document.getElementById('users-location');
         return userOriginEl;
       }
@@ -179,12 +161,12 @@ class Renderer {
     return '';
   }
 
-  static usingUserLocation = () => {
-    if (Navigator.usingUserLocation) {
-      return `Don't Use My Location`;
+  static getErrorText = (typeOfError) => {
+    if (document.getElementById(`${typeOfError}-error`) !== null) {
+      return this[`${typeOfError}ErrorMessage`].get();
     }
 
-    return 'Use My Location';
+    return '';
   }
 
   static renderPage = () => {
@@ -217,11 +199,11 @@ class Renderer {
     </div>
     
     <div class="bus-container">
-      <h2 id="route-error" class="error">${this.getErrorText('same-selection')}</h2>
-      ${this.buildRouteHtml()}
+      <h2 id="route-error" class="error">${this.getErrorText('route')}</h2>
+      ${this.buildTripPlansHtml()}
       <table id="my-trip">
         <tbody>
-        ${this.buildTripHtml()}
+        ${this.buildSelectedTripHtml()}
         </tbody>
       </table>
     </div>`;

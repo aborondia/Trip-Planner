@@ -12,7 +12,7 @@ class Navigator {
   }
 
   static locationNotAvailable = () => {
-    Renderer.routeErrorMessage.set('Please Turn Location Services On');
+    Renderer.routeErrorMessage.set('Please turn location services on');
     tripPlanner.clearTripPlans();
     Renderer.renderPage();
   }

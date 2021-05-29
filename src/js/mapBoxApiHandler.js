@@ -81,8 +81,9 @@ class MapBox {
   getUserOrigin = () => {
     const urlToFetch = this.getFetchUrl('user-origin')
     DataFetcher.getData(urlToFetch)
-      .then((data) => {
+      .then(() => {
         Navigator.usingUserLocation = true;
+        Renderer.clearErrors();
         Renderer.renderPage();
       })
   }

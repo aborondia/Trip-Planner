@@ -2,4 +2,4 @@
 
 This is a project I made as part of the Software Developer program at the Manitoba Institute of trades and Technology.
 
-It uses the [mapbox API](https://www.mapbox.com/) and the [Winnipeg Transit API](https://api.winnipegtransit.com/) to allow the user to set an origin (can also use current location), and a destination, and get bus route information & directions to their destination.
+It allows the user to search a database (local json file) for books. The user can add books to different categories (read, unread, want to read) of their "bookshelf", as well as move/remove books from the shelf view itself.
